@@ -1,0 +1,47 @@
+{{- if .Values.ingress.certManagerEnabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: clusters-4wm
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
+spec:
+  {{- with (first .Values.ingress.tls )}}
+  commonName: {{ printf "%s.cloud.bmw"  (first .hosts | sha256sum | trunc 50 ) }}
+  {{- end }}
+  dnsNames:
+    {{- with (first .Values.ingress.tls )}}
+    - {{ printf "%s.cloud.bmw"  (first .hosts | sha256sum | trunc 50 ) }}
+    {{- end }}
+    {{- range $tls := .Values.ingress.tls }}
+    {{- range $host := $tls.hosts }}
+    - {{ tpl $host $ }}
+    {{- end }}
+    {{- end }}
+  emailAddresses:
+  - "4WheelsManagedCertificates@list.bmw.com"
+  issuerRef:
+    kind: ClusterIssuer
+    group: cert-manager.pki.bmwgroup.net
+    name: cards-issuer-cluster-issuer
+  {{- with (first .Values.ingress.tls )}}
+  secretName: {{ include "clusters-4wm.fullname" $ }}-{{ .secretName }}
+  privateKey:
+    rotationPolicy: Always
+    algorithm: RSA
+    encoding: PKCS1
+    size: 4096
+  renewBefore: 720h0m0s
+  {{- end }}
+  subject:
+    countries:
+      - DE
+    localities:
+      - Munich
+    organizationalUnits:
+      - PKI Services
+    organizations:
+      - Bayerische Motoren Werke AG
+    provinces:
+      - Bavaria
+{{- end }}

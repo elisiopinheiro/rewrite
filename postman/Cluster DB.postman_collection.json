@@ -1,0 +1,449 @@
+{
+	"info": {
+		"_postman_id": "083c7acd-e8ff-4a8c-b8b0-73c7cdaced1d",
+		"name": "Cluster DB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hostname}}/health",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clusters",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"test1\",\n    \"environment\": \"testing\",\n    \"release\": \"release/1.0.0\",\n    \"repository\": \"https://test.com/subscription_clustername2\",\n    \"internal\": \"True\",\n    \"subscription\": \"abc123\",\n    \"provider\": \"aws\",\n    \"node_min_count\": 3,\n    \"node_max_count\": 6,\n    \"provider_region\": \"germanywestcentral\",\n    \"infra_revision\": \"3.2.2\",\n    \"tshirt_size\": \"m\",\n    \"kubernetes_version\": \"1.21\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/v1/clusters",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"v1",
+						"clusters"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cluster by params",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hostname}}/v1/clusters",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"v1",
+						"clusters"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "test2",
+							"disabled": true
+						},
+						{
+							"key": "subscription",
+							"value": "abc123",
+							"disabled": true
+						},
+						{
+							"key": "provider",
+							"value": "azure",
+							"disabled": true
+						},
+						{
+							"key": "release",
+							"value": "release/1.0.0",
+							"disabled": true
+						},
+						{
+							"key": "internal",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "node_min_count",
+							"value": "3",
+							"disabled": true
+						},
+						{
+							"key": "node_max_count",
+							"value": "6",
+							"disabled": true
+						},
+						{
+							"key": "provider_region",
+							"value": "eu-west-1",
+							"disabled": true
+						},
+						{
+							"key": "tshirt_size",
+							"value": "m",
+							"disabled": true
+						},
+						{
+							"key": "infra_revision",
+							"value": "3.2.2",
+							"disabled": true
+						},
+						{
+							"key": "kubernetes_version",
+							"value": "1.22",
+							"disabled": true
+						},
+						{
+							"key": "environment",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "repository",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cluster",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"repository\": \"https://test.com/1324_cluster1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/v1/clusters/1",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"v1",
+						"clusters",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cluster",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/v1/clusters/1",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"v1",
+						"clusters",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "operation",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"type\": \"UPDATE\",\n    \"status\": \"started\",\n    \"jenkins_url\": \"https://jenkins.com/123\",\n    \"cluster_repository\": \"https://test.com/subscription_clustername2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/v1/clusters/1/operations",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"v1",
+						"clusters",
+						"1",
+						"operations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cluster operations",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"type\": \"UPDATE\",\n    \"status\": \"finished\",\n    \"jenkins_url\": \"https://jenkins.com/123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/v1/clusters/1/operations",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"v1",
+						"clusters",
+						"1",
+						"operations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "operations",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"type\": \"UPDATE\",\n    \"status\": \"finished\",\n    \"jenkins_url\": \"https://jenkins.com/123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/v1/operations",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"v1",
+						"operations"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "finished",
+							"disabled": true
+						},
+						{
+							"key": "type",
+							"value": "UPDATE",
+							"disabled": true
+						},
+						{
+							"key": "jenkins_url",
+							"value": "https://jenkins.com/123",
+							"disabled": true
+						},
+						{
+							"key": "cluster_repository",
+							"value": "https://test.com/subscription_clustername2",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "hostname",
+			"value": "http://localhost:8000",
+			"type": "default"
+		},
+		{
+			"key": "username",
+			"value": "4wm",
+			"type": "default"
+		},
+		{
+			"key": "password",
+			"value": "4wm",
+			"type": "default"
+		}
+	]
+}

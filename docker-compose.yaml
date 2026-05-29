@@ -1,0 +1,98 @@
+name: clusters-api
+
+services:
+  adminer:
+    container_name: adminer
+    platform: linux/amd64
+    image: adminer:latest
+    ports:
+      - 8080:8080
+
+  db:
+    container_name: postgres_db_clusters_4wm
+    platform: linux/amd64
+    image: postgres:17.9
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=cluster_app
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=clusters
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cluster_app -d clusters"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  init_db:
+    container_name: init_db
+    platform: linux/amd64
+    build: .
+    restart: on-failure
+    command:
+      - "sh"
+      - "-c"
+      - "poetry run alembic upgrade head"
+    environment:
+      - DB_NAME=clusters
+      - DB_HOST=db
+      - DB_USERNAME=cluster_app
+      - DB_PASSWORD=password
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    container_name: app
+    platform: linux/amd64
+    build: .
+    develop:
+      watch:
+        - path: ./src/api
+          action: sync
+          target: /home/api-user/api
+    command: bash -c "poetry run python -m debugpy --listen 0.0.0.0:5678 -m uvicorn api.m4w.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir api"
+    ports:
+      - 8010:8000
+      - 5678:5678 # Debugger port
+    environment:
+      - DB_NAME=clusters
+      - DB_HOST=db
+      - DB_USERNAME=cluster_app
+      - DB_PASSWORD=password
+      - BASIC_API_USERNAME=4wm
+      - BASIC_API_PASSWORD=4wm
+      - BASIC_BACKFILL_USERNAME=4wm-backfill
+      - BASIC_BACKFILL_PASSWORD=4wm-backfill
+      - ADGR_GROUP_REGEX="^(APPL_|RN-|RN_).*$"
+      - DATABASE_LOGGING_LEVEL=Warn
+    depends_on:
+      - init_db
+    volumes:
+      - ./migrations/versions:/home/api-user/migrations/versions
+
+  partner-app:
+    container_name: partner-app
+    platform: linux/amd64
+    command: ["poetry", "run", "uvicorn", "api.partner.main:app", "--host", "0.0.0.0", "--port", "8001"]
+    build: .
+    ports:
+      - 8011:8001
+    environment:
+      - DB_NAME=clusters
+      - DB_HOST=db
+      - DB_USERNAME=cluster_app
+      - DB_PASSWORD=password
+      - BASIC_M4W_API_USERNAME=ctw
+      - BASIC_M4W_API_PASSWORD=ctw
+      - BASIC_CLOUD_API_USERNAME=cloud
+      - BASIC_CLOUD_API_PASSWORD=cloud
+      - BASIC_SCP_API_USERNAME=scp
+      - BASIC_SCP_API_PASSWORD=scp
+      - BASIC_SOLAR_API_USERNAME=solar
+      - BASIC_SOLAR_API_PASSWORD=solar
+      - ADGR_GROUP_REGEX="^(APPL_|RN-|RN_).*$"
+      - DATABASE_LOGGING_LEVEL=Warn
+    depends_on:
+      - db
+      - init_db

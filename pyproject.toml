@@ -1,0 +1,121 @@
+[project]
+name = "cluster-database"
+description = ""
+version = "1.3.0"
+authors = [
+  { name = "Team Isetta", email = "teamisettainternal@criticaltechworks.com" },
+]
+requires-python = '>=3.12'
+dependencies = [
+  'fastapi (~=0.135.1)',
+  'httpx (>=0.28.1)',
+  'pydantic (>=2.0,<3.0)',
+  'sqlmodel (~=0.0.37)',
+  'uvicorn (~=0.42.0)',
+  'psycopg2-binary (>=2.9.9)',
+  'sqlalchemy (>=2.0)',
+  'python-json-logger (>=2.0.2,<3.0.0)',
+  'opentelemetry-api (>=1.31.1,<2.0.0)',
+  'opentelemetry-sdk (>=1.31.1,<2.0.0)',
+  'opentelemetry-instrumentation-fastapi (>=0.52b1,<1.0.0)',
+  'opentelemetry-exporter-prometheus (>=0.52b1,<1.0.0)',
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+requires-poetry = '>=2.0,<3.0'
+packages = [{ include = "api", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.group.dev.dependencies]
+alembic = "^1.16.5"
+alembic_utils = "^0.8.8"
+ruff = "^0.13.1"
+pre-commit = "^4.3.0"
+debugpy = "^1.8.17"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.4.2"
+testcontainers = "^4.13.0"
+anyio = "^4.10.0"
+faker = "^37.8.0"
+factory-boy = "^3.3.3"
+pytest-cov = "^6.2.1"
+
+[tool.ruff]
+src = ["src"]
+
+exclude = [".git", "__py_cache__", ".ruff_cache", ".venv", ".vscode", "alembic"]
+
+line-length = 120
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "Q", "I", "E501"]
+ignore = ["E203", "E266", "F403", "B008", "FIX002"]
+
+fixable = ["ALL"]
+unfixable = []
+task-tags = ["TODO", "FIXME"]
+preview = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+preview = true
+skip-magic-trailing-comma = false
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[tool.pytest.ini_options]
+markers = [
+  # Test types
+  "unit: Unit tests",
+  "integration: Integration tests",
+  "contract: Contract tests",
+
+  # Application types
+  "clusters4wm_app: Tests for clusters-4wm application",
+  "partner_app: Tests for partner API",
+
+  # Feature areas
+  "models: Model tests",
+  "authentication: Authentication tests",
+  "authorization: Authorization tests",
+  "roles: Role-based tests",
+
+  # Cluster fields
+  "headlamp_enabled: Tests for headlamp enabled field",
+  "teams_webhooks: Tests for Teams webhooks functionality",
+  "storage_classes: Test for all types of storage classes",
+  "remote_storage_classes: Tests for remote storage classes",
+  "ultra_ssd_storage_classes: Tests for ultra SSD storage classes",
+  "optional_features: Tests for optional features",
+  "additional_node_pools: Tests for additional node pools",
+  "client_namespaces: Tests for client namespaces",
+  "locked: Tests for cluster lock functionality",
+  "cluster_lock: Tests for cluster lock/unlock endpoints",
+  "cluster_status: Tests for cluster status endpoints",
+  "client_otlp_endpoints: Tests for client OTLP endpoints",
+
+  # Releases
+  "releases: Release tests",
+  "reserved_namespaces: Reserved namespaces tests",
+
+  # Partner App endpoints
+  "scp: SCP partner tests",
+  "cf: CF partner tests",
+  "solar: SOLAR partner tests",
+
+  # Error scenarios
+  "not_found: HTTP 404 not found tests",
+  "conflict: HTTP 409 conflict tests",
+  "validation: HTTP 422 validation error tests",
+]

@@ -1,0 +1,25 @@
+environment: prod
+
+image:
+  repository: 688376064307.dkr.ecr.eu-central-1.amazonaws.com/clusters-4wm
+
+ingress:
+  enabled: true
+  certManagerEnabled: true
+  hosts:
+    - host: clusters-4wm-scp.apps.4wm-services.eu-central-1.aws.cloud.bmw
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: clusters-4wm-partner.apps.4wm-services.eu-central-1.aws.cloud.bmw
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: tls
+      hosts:
+        - clusters-4wm-scp.apps.4wm-services.eu-central-1.aws.cloud.bmw
+        - clusters-4wm-partner.apps.4wm-services.eu-central-1.aws.cloud.bmw
+
+database:
+  host: clusters-4wm-prod-master.cwq9fxffu0cw.eu-central-1.rds.amazonaws.com

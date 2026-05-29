@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/refs/heads/main/schemas/config.json",
+	"changelog-host": "https://atc-github.azure.cloud.bmw",
+	"packages": {
+		".": {
+			"release-type": "python",
+			"include-component-in-tag": false,
+			"include-v-in-tag": false,
+			"extra-files": [
+				{
+					"type": "yaml",
+					"path": "applications/clusters-4wm/Chart.yaml",
+					"jsonpath": "$.appVersion"
+				},
+				{
+					"type": "yaml",
+					"path": "applications/clusters-4wm/Chart.yaml",
+					"jsonpath": "$.version"
+				}
+			]
+		}
+	}
+}

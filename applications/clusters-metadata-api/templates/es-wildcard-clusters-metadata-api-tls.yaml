@@ -1,0 +1,27 @@
+{{- if not .Values.ingress.certManagerEnabled }}
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: clusters-metadata-api-tls
+spec:
+  refreshInterval: 10m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: clusters-metadata-api-tls
+    template:
+      type: kubernetes.io/tls
+      data:
+        tls.crt: "{{ printf "{{ .wildcardcert }}" }}" #escaping variable so that it ends up in the final template
+        tls.key: "{{ printf "{{ .wildcardkey }}" }}" #escaping variable so that it ends up in the final template
+  data:
+  - secretKey: wildcardcert
+    remoteRef:
+      key: k8s-management/cluster/{{ .Values.cluster_name }}/cards-wildcard
+      property: cert
+  - secretKey: wildcardkey
+    remoteRef:
+      key: k8s-management/cluster/{{ .Values.cluster_name }}/cards-wildcard
+      property: key
+{{- end }}

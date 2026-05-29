@@ -1,0 +1,46 @@
+{{- if .Values.initDb.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "clusters-metadata-api.fullname" . }}-init-db
+  labels:
+    {{- include "clusters-metadata-api.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: Never
+      containers:
+        - name: {{ .Chart.Name }}-init-db
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          command:
+            {{- toYaml .Values.initDb.command | nindent 12 }}
+          env:
+            - name: DB_HOST
+              value: {{ include "clusters-metadata-api.databaseHost" . }}
+            - name: DB_NAME
+              value: {{ .Values.database.name }}
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: {{ include "clusters-metadata-api.fullname" . }}-db-credentials
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: {{ include "clusters-metadata-api.fullname" . }}-db-credentials
+            - name: ADGR_GROUP_REGEX
+              value: {{ .Values.namespaces.adgr_group_regex }}
+{{- end -}}

@@ -1,0 +1,5465 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Clusters Metadata API",
+    "description": "Canonical API for managed-cluster metadata.",
+    "version": "development"
+  },
+  "paths": {
+    "/v3/clusters/status": {
+      "get": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "List Cluster Statuses",
+        "operationId": "list_cluster_statuses_v3_clusters_status_get",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Name"
+            }
+          },
+          {
+            "name": "subscription",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Subscription"
+            }
+          },
+          {
+            "name": "account_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Name"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ClusterStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Provider"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider"
+            }
+          },
+          {
+            "name": "release",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Release"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Environment"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Environment"
+            }
+          },
+          {
+            "name": "internal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Internal"
+            }
+          },
+          {
+            "name": "multi_tenant",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Multi Tenant"
+            }
+          },
+          {
+            "name": "provider_region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider Region"
+            }
+          },
+          {
+            "name": "repository",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Repository"
+            }
+          },
+          {
+            "name": "kubernetes_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kubernetes Version"
+            }
+          },
+          {
+            "name": "owner_group",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Owner Group"
+            }
+          },
+          {
+            "name": "cmdb_app_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cmdb App Id"
+            }
+          },
+          {
+            "name": "cmdb_appd_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cmdb Appd Id"
+            }
+          },
+          {
+            "name": "azure_sku_tier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AzureSkuTier"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Azure Sku Tier"
+            }
+          },
+          {
+            "name": "locked",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Locked"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ClusterOrderBy",
+              "default": "id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterStatusListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "Update Cluster Statuses",
+        "operationId": "update_cluster_statuses_v3_clusters_status_patch",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Name"
+            }
+          },
+          {
+            "name": "subscription",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Subscription"
+            }
+          },
+          {
+            "name": "account_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Name"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ClusterStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Provider"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider"
+            }
+          },
+          {
+            "name": "release",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Release"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Environment"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Environment"
+            }
+          },
+          {
+            "name": "internal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Internal"
+            }
+          },
+          {
+            "name": "multi_tenant",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Multi Tenant"
+            }
+          },
+          {
+            "name": "provider_region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider Region"
+            }
+          },
+          {
+            "name": "repository",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Repository"
+            }
+          },
+          {
+            "name": "kubernetes_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kubernetes Version"
+            }
+          },
+          {
+            "name": "owner_group",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Owner Group"
+            }
+          },
+          {
+            "name": "cmdb_app_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cmdb App Id"
+            }
+          },
+          {
+            "name": "cmdb_appd_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cmdb Appd Id"
+            }
+          },
+          {
+            "name": "azure_sku_tier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AzureSkuTier"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Azure Sku Tier"
+            }
+          },
+          {
+            "name": "locked",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Locked"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ClusterOrderBy",
+              "default": "id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkClusterStatusUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkClusterStatusUpdateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/clusters": {
+      "get": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "List Clusters",
+        "operationId": "list_clusters_v3_clusters_get",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Name"
+            }
+          },
+          {
+            "name": "subscription",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Subscription"
+            }
+          },
+          {
+            "name": "account_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Name"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ClusterStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Provider"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider"
+            }
+          },
+          {
+            "name": "release",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Release"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Environment"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Environment"
+            }
+          },
+          {
+            "name": "internal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Internal"
+            }
+          },
+          {
+            "name": "multi_tenant",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Multi Tenant"
+            }
+          },
+          {
+            "name": "provider_region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider Region"
+            }
+          },
+          {
+            "name": "repository",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Repository"
+            }
+          },
+          {
+            "name": "kubernetes_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kubernetes Version"
+            }
+          },
+          {
+            "name": "owner_group",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Owner Group"
+            }
+          },
+          {
+            "name": "cmdb_app_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cmdb App Id"
+            }
+          },
+          {
+            "name": "cmdb_appd_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cmdb Appd Id"
+            }
+          },
+          {
+            "name": "azure_sku_tier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AzureSkuTier"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Azure Sku Tier"
+            }
+          },
+          {
+            "name": "locked",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Locked"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ClusterOrderBy",
+              "default": "id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "Create Cluster",
+        "operationId": "create_cluster_v3_clusters_post",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/AwsClusterCreate"
+                  },
+                  {
+                    "$ref": "#/components/schemas/AzureClusterCreate"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "provider",
+                  "mapping": {
+                    "aws": "#/components/schemas/AwsClusterCreate",
+                    "azure": "#/components/schemas/AzureClusterCreate"
+                  }
+                },
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AwsClusterRead"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AzureClusterRead"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "provider",
+                    "mapping": {
+                      "aws": "#/components/schemas/AwsClusterRead",
+                      "azure": "#/components/schemas/AzureClusterRead"
+                    }
+                  },
+                  "title": "Response Create Cluster V3 Clusters Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/clusters/{cluster_name}": {
+      "get": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "Get Cluster",
+        "operationId": "get_cluster_v3_clusters__cluster_name__get",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cluster_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cluster Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AwsClusterRead"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AzureClusterRead"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "provider",
+                    "mapping": {
+                      "aws": "#/components/schemas/AwsClusterRead",
+                      "azure": "#/components/schemas/AzureClusterRead"
+                    }
+                  },
+                  "title": "Response Get Cluster V3 Clusters  Cluster Name  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "Update Cluster",
+        "operationId": "update_cluster_v3_clusters__cluster_name__patch",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cluster_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cluster Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClusterPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AwsClusterRead"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AzureClusterRead"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "provider",
+                    "mapping": {
+                      "aws": "#/components/schemas/AwsClusterRead",
+                      "azure": "#/components/schemas/AzureClusterRead"
+                    }
+                  },
+                  "title": "Response Update Cluster V3 Clusters  Cluster Name  Patch"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "Delete Cluster",
+        "operationId": "delete_cluster_v3_clusters__cluster_name__delete",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cluster_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cluster Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterDeleteResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/features": {
+      "get": {
+        "tags": [
+          "features"
+        ],
+        "summary": "List Features",
+        "operationId": "list_features_v3_features_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureListResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "features"
+        ],
+        "summary": "Create Feature",
+        "operationId": "create_feature_v3_features_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeatureCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ]
+      }
+    },
+    "/v3/features/{feature_id}": {
+      "delete": {
+        "tags": [
+          "features"
+        ],
+        "summary": "Delete Feature",
+        "operationId": "delete_feature_v3_features__feature_id__delete",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "feature_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Feature Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureDeleteResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/locks": {
+      "get": {
+        "tags": [
+          "locks"
+        ],
+        "summary": "List Locks",
+        "operationId": "list_locks_v3_locks_get",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cluster_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cluster Name"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Owner"
+            }
+          },
+          {
+            "name": "locked",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Locked"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterLockListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/clusters/{cluster_name}/lock": {
+      "post": {
+        "tags": [
+          "locks"
+        ],
+        "summary": "Acquire Lock",
+        "operationId": "acquire_lock_v3_clusters__cluster_name__lock_post",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cluster_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cluster Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcquireClusterLockRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcquireClusterLockResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "locks"
+        ],
+        "summary": "Release Lock",
+        "operationId": "release_lock_v3_clusters__cluster_name__lock_delete",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cluster_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cluster Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseClusterLockRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseClusterLockResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/operations": {
+      "get": {
+        "tags": [
+          "operations"
+        ],
+        "summary": "List Operations",
+        "operationId": "list_operations_v3_operations_get",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "operation_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Operation Type"
+            }
+          },
+          {
+            "name": "operation_status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Operation Status"
+            }
+          },
+          {
+            "name": "cicd_url",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cicd Url"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/clusters/{cluster_name}/operations": {
+      "get": {
+        "tags": [
+          "operations"
+        ],
+        "summary": "List Cluster Operations",
+        "operationId": "list_cluster_operations_v3_clusters__cluster_name__operations_get",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cluster_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cluster Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "operations"
+        ],
+        "summary": "Create Operation",
+        "operationId": "create_operation_v3_clusters__cluster_name__operations_post",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cluster_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cluster Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperationCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/releases": {
+      "get": {
+        "tags": [
+          "releases"
+        ],
+        "summary": "List Releases",
+        "operationId": "list_releases_v3_releases_get",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Name"
+            }
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Provider"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ReleaseOrderBy",
+              "default": "id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "releases"
+        ],
+        "summary": "Create Release",
+        "operationId": "create_release_v3_releases_post",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/releases/{release_id}": {
+      "get": {
+        "tags": [
+          "releases"
+        ],
+        "summary": "Get Release",
+        "operationId": "get_release_v3_releases__release_id__get",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "release_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Release Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "releases"
+        ],
+        "summary": "Delete Release",
+        "operationId": "delete_release_v3_releases__release_id__delete",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "release_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Release Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseDeleteResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AcquireClusterLockRequest": {
+        "properties": {
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner"
+          },
+          "timeout_minutes": {
+            "type": "integer",
+            "maximum": 720.0,
+            "minimum": 0.0,
+            "title": "Timeout Minutes",
+            "default": 360
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AcquireClusterLockRequest"
+      },
+      "AcquireClusterLockResponse": {
+        "properties": {
+          "cluster_name": {
+            "type": "string",
+            "title": "Cluster Name"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "timeout_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timeout At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cluster_name",
+          "message",
+          "token",
+          "timeout_at"
+        ],
+        "title": "AcquireClusterLockResponse"
+      },
+      "AdditionalNodePoolRead": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9]{1,12}$",
+            "title": "Name"
+          },
+          "node_min_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Node Min Count"
+          },
+          "node_max_count": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Node Max Count"
+          },
+          "tshirt_size": {
+            "type": "string",
+            "title": "Tshirt Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "node_min_count",
+          "node_max_count",
+          "tshirt_size"
+        ],
+        "title": "AdditionalNodePoolRead"
+      },
+      "AdditionalNodePoolWrite": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9]{1,12}$",
+            "title": "Name"
+          },
+          "node_min_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Node Min Count"
+          },
+          "node_max_count": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Node Max Count"
+          },
+          "tshirt_size": {
+            "type": "string",
+            "title": "Tshirt Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "node_min_count",
+          "node_max_count",
+          "tshirt_size"
+        ],
+        "title": "AdditionalNodePoolWrite"
+      },
+      "AwsClusterCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "subscription": {
+            "type": "string",
+            "title": "Subscription"
+          },
+          "account_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Name"
+          },
+          "release": {
+            "type": "string",
+            "title": "Release"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "internal": {
+            "type": "boolean",
+            "title": "Internal"
+          },
+          "repository": {
+            "type": "string",
+            "title": "Repository"
+          },
+          "multi_tenant": {
+            "type": "boolean",
+            "title": "Multi Tenant",
+            "default": false
+          },
+          "node_min_count": {
+            "type": "integer",
+            "title": "Node Min Count"
+          },
+          "node_max_count": {
+            "type": "integer",
+            "title": "Node Max Count"
+          },
+          "provider_region": {
+            "type": "string",
+            "title": "Provider Region"
+          },
+          "tshirt_size": {
+            "type": "string",
+            "title": "Tshirt Size"
+          },
+          "infra_revision": {
+            "type": "string",
+            "title": "Infra Revision"
+          },
+          "kubernetes_version": {
+            "type": "string",
+            "title": "Kubernetes Version"
+          },
+          "appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appd Id"
+          },
+          "authorized_api_ip_ranges": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authorized Api Ip Ranges"
+          },
+          "dns_zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dns Zone"
+          },
+          "logging_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logging Retention Period"
+          },
+          "tracing_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracing Retention Period"
+          },
+          "pod_cidr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pod Cidr"
+          },
+          "service_cidr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Cidr"
+          },
+          "owner_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Group"
+          },
+          "cmdb_app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb App Id"
+          },
+          "cmdb_appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb Appd Id"
+          },
+          "network_cidr": {
+            "type": "string",
+            "title": "Network Cidr"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClusterStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "uptime_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uptime Period"
+          },
+          "gateway_api_enabled": {
+            "type": "boolean",
+            "title": "Gateway Api Enabled",
+            "default": false
+          },
+          "domain_allowlist": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Allowlist"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/FeatureToggleCreate"
+            },
+            "type": "array",
+            "title": "Features"
+          },
+          "client_namespaces": {
+            "items": {
+              "$ref": "#/components/schemas/ClientNamespaceWrite"
+            },
+            "type": "array",
+            "title": "Client Namespaces"
+          },
+          "additional_node_pools": {
+            "items": {
+              "$ref": "#/components/schemas/AdditionalNodePoolWrite"
+            },
+            "type": "array",
+            "title": "Additional Node Pools"
+          },
+          "teams_webhooks": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TeamsWebhookWrite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "client_otlp_endpoints": {
+            "items": {
+              "$ref": "#/components/schemas/ClientOTLPEndpointWrite"
+            },
+            "type": "array",
+            "title": "Client Otlp Endpoints"
+          },
+          "provider": {
+            "type": "string",
+            "const": "aws",
+            "title": "Provider"
+          },
+          "aws_vpc": {
+            "type": "string",
+            "title": "Aws Vpc"
+          },
+          "aws_vpc_endpoint_remote_account_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aws Vpc Endpoint Remote Account Ids"
+          },
+          "aws_remote_account_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aws Remote Account Ids"
+          },
+          "vpc_endpoint_service_name": {
+            "type": "string",
+            "title": "Vpc Endpoint Service Name",
+            "default": ""
+          },
+          "vpc_endpoint_service_ingress_name": {
+            "type": "string",
+            "title": "Vpc Endpoint Service Ingress Name",
+            "default": ""
+          },
+          "cluster_oidc_issuer_url": {
+            "type": "string",
+            "title": "Cluster Oidc Issuer Url",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "subscription",
+          "release",
+          "environment",
+          "internal",
+          "repository",
+          "node_min_count",
+          "node_max_count",
+          "provider_region",
+          "tshirt_size",
+          "infra_revision",
+          "kubernetes_version",
+          "network_cidr",
+          "provider",
+          "aws_vpc"
+        ],
+        "title": "AwsClusterCreate"
+      },
+      "AwsClusterRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "subscription": {
+            "type": "string",
+            "title": "Subscription"
+          },
+          "account_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Name"
+          },
+          "provider": {
+            "type": "string",
+            "const": "aws",
+            "title": "Provider"
+          },
+          "release": {
+            "type": "string",
+            "title": "Release"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "internal": {
+            "type": "boolean",
+            "title": "Internal"
+          },
+          "repository": {
+            "type": "string",
+            "title": "Repository"
+          },
+          "multi_tenant": {
+            "type": "boolean",
+            "title": "Multi Tenant"
+          },
+          "node_min_count": {
+            "type": "integer",
+            "title": "Node Min Count"
+          },
+          "node_max_count": {
+            "type": "integer",
+            "title": "Node Max Count"
+          },
+          "provider_region": {
+            "type": "string",
+            "title": "Provider Region"
+          },
+          "tshirt_size": {
+            "type": "string",
+            "title": "Tshirt Size"
+          },
+          "infra_revision": {
+            "type": "string",
+            "title": "Infra Revision"
+          },
+          "kubernetes_version": {
+            "type": "string",
+            "title": "Kubernetes Version"
+          },
+          "appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appd Id"
+          },
+          "authorized_api_ip_ranges": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authorized Api Ip Ranges"
+          },
+          "dns_zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dns Zone"
+          },
+          "logging_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logging Retention Period"
+          },
+          "tracing_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracing Retention Period"
+          },
+          "pod_cidr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pod Cidr"
+          },
+          "service_cidr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Cidr"
+          },
+          "owner_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Group"
+          },
+          "cmdb_app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb App Id"
+          },
+          "cmdb_appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb Appd Id"
+          },
+          "network_cidr": {
+            "type": "string",
+            "title": "Network Cidr"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClusterStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "uptime_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uptime Period"
+          },
+          "gateway_api_enabled": {
+            "type": "boolean",
+            "title": "Gateway Api Enabled"
+          },
+          "domain_allowlist": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Allowlist"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/FeatureToggleRead"
+            },
+            "type": "array",
+            "title": "Features"
+          },
+          "user_features": {
+            "items": {
+              "$ref": "#/components/schemas/UserFeatureRead"
+            },
+            "type": "array",
+            "title": "User Features"
+          },
+          "client_namespaces": {
+            "items": {
+              "$ref": "#/components/schemas/ClientNamespaceRead"
+            },
+            "type": "array",
+            "title": "Client Namespaces"
+          },
+          "additional_node_pools": {
+            "items": {
+              "$ref": "#/components/schemas/AdditionalNodePoolRead"
+            },
+            "type": "array",
+            "title": "Additional Node Pools"
+          },
+          "teams_webhooks": {
+            "items": {
+              "$ref": "#/components/schemas/TeamsWebhookRead"
+            },
+            "type": "array",
+            "title": "Teams Webhooks"
+          },
+          "client_otlp_endpoints": {
+            "items": {
+              "$ref": "#/components/schemas/ClientOTLPEndpointRead"
+            },
+            "type": "array",
+            "title": "Client Otlp Endpoints"
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked"
+          },
+          "is_in_downtime_window": {
+            "type": "boolean",
+            "title": "Is In Downtime Window"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "aws_vpc": {
+            "type": "string",
+            "title": "Aws Vpc"
+          },
+          "aws_vpc_endpoint_remote_account_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aws Vpc Endpoint Remote Account Ids"
+          },
+          "aws_remote_account_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aws Remote Account Ids"
+          },
+          "vpc_endpoint_service_name": {
+            "type": "string",
+            "title": "Vpc Endpoint Service Name"
+          },
+          "vpc_endpoint_service_ingress_name": {
+            "type": "string",
+            "title": "Vpc Endpoint Service Ingress Name"
+          },
+          "cluster_oidc_issuer_url": {
+            "type": "string",
+            "title": "Cluster Oidc Issuer Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "subscription",
+          "provider",
+          "release",
+          "environment",
+          "internal",
+          "repository",
+          "multi_tenant",
+          "node_min_count",
+          "node_max_count",
+          "provider_region",
+          "tshirt_size",
+          "infra_revision",
+          "kubernetes_version",
+          "network_cidr",
+          "gateway_api_enabled",
+          "domain_allowlist",
+          "features",
+          "user_features",
+          "client_namespaces",
+          "additional_node_pools",
+          "teams_webhooks",
+          "client_otlp_endpoints",
+          "locked",
+          "is_in_downtime_window",
+          "aws_vpc",
+          "aws_vpc_endpoint_remote_account_ids",
+          "aws_remote_account_ids",
+          "vpc_endpoint_service_name",
+          "vpc_endpoint_service_ingress_name",
+          "cluster_oidc_issuer_url"
+        ],
+        "title": "AwsClusterRead"
+      },
+      "AzureClusterCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "subscription": {
+            "type": "string",
+            "title": "Subscription"
+          },
+          "account_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Name"
+          },
+          "release": {
+            "type": "string",
+            "title": "Release"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "internal": {
+            "type": "boolean",
+            "title": "Internal"
+          },
+          "repository": {
+            "type": "string",
+            "title": "Repository"
+          },
+          "multi_tenant": {
+            "type": "boolean",
+            "title": "Multi Tenant",
+            "default": false
+          },
+          "node_min_count": {
+            "type": "integer",
+            "title": "Node Min Count"
+          },
+          "node_max_count": {
+            "type": "integer",
+            "title": "Node Max Count"
+          },
+          "provider_region": {
+            "type": "string",
+            "title": "Provider Region"
+          },
+          "tshirt_size": {
+            "type": "string",
+            "title": "Tshirt Size"
+          },
+          "infra_revision": {
+            "type": "string",
+            "title": "Infra Revision"
+          },
+          "kubernetes_version": {
+            "type": "string",
+            "title": "Kubernetes Version"
+          },
+          "appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appd Id"
+          },
+          "authorized_api_ip_ranges": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authorized Api Ip Ranges"
+          },
+          "dns_zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dns Zone"
+          },
+          "logging_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logging Retention Period"
+          },
+          "tracing_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracing Retention Period"
+          },
+          "pod_cidr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pod Cidr"
+          },
+          "service_cidr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Cidr"
+          },
+          "owner_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Group"
+          },
+          "cmdb_app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb App Id"
+          },
+          "cmdb_appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb Appd Id"
+          },
+          "network_cidr": {
+            "type": "string",
+            "title": "Network Cidr"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClusterStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "uptime_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uptime Period"
+          },
+          "gateway_api_enabled": {
+            "type": "boolean",
+            "title": "Gateway Api Enabled",
+            "default": false
+          },
+          "domain_allowlist": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Allowlist"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/FeatureToggleCreate"
+            },
+            "type": "array",
+            "title": "Features"
+          },
+          "client_namespaces": {
+            "items": {
+              "$ref": "#/components/schemas/ClientNamespaceWrite"
+            },
+            "type": "array",
+            "title": "Client Namespaces"
+          },
+          "additional_node_pools": {
+            "items": {
+              "$ref": "#/components/schemas/AdditionalNodePoolWrite"
+            },
+            "type": "array",
+            "title": "Additional Node Pools"
+          },
+          "teams_webhooks": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TeamsWebhookWrite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "client_otlp_endpoints": {
+            "items": {
+              "$ref": "#/components/schemas/ClientOTLPEndpointWrite"
+            },
+            "type": "array",
+            "title": "Client Otlp Endpoints"
+          },
+          "provider": {
+            "type": "string",
+            "const": "azure",
+            "title": "Provider"
+          },
+          "azure_sku_tier": {
+            "$ref": "#/components/schemas/AzureSkuTier"
+          },
+          "azure_subnet_name": {
+            "type": "string",
+            "title": "Azure Subnet Name"
+          },
+          "azure_vnet_name": {
+            "type": "string",
+            "title": "Azure Vnet Name"
+          },
+          "azure_vnet_resource_group": {
+            "type": "string",
+            "title": "Azure Vnet Resource Group"
+          },
+          "dns_service_ip": {
+            "type": "string",
+            "title": "Dns Service Ip"
+          },
+          "mi_agentpool_object_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mi Agentpool Object Id"
+          },
+          "mi_cluster_object_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mi Cluster Object Id"
+          },
+          "storage_classes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StorageClassPayloadWrite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "subscription",
+          "release",
+          "environment",
+          "internal",
+          "repository",
+          "node_min_count",
+          "node_max_count",
+          "provider_region",
+          "tshirt_size",
+          "infra_revision",
+          "kubernetes_version",
+          "network_cidr",
+          "provider",
+          "azure_sku_tier",
+          "azure_subnet_name",
+          "azure_vnet_name",
+          "azure_vnet_resource_group",
+          "dns_service_ip"
+        ],
+        "title": "AzureClusterCreate"
+      },
+      "AzureClusterRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "subscription": {
+            "type": "string",
+            "title": "Subscription"
+          },
+          "account_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Name"
+          },
+          "provider": {
+            "type": "string",
+            "const": "azure",
+            "title": "Provider"
+          },
+          "release": {
+            "type": "string",
+            "title": "Release"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "internal": {
+            "type": "boolean",
+            "title": "Internal"
+          },
+          "repository": {
+            "type": "string",
+            "title": "Repository"
+          },
+          "multi_tenant": {
+            "type": "boolean",
+            "title": "Multi Tenant"
+          },
+          "node_min_count": {
+            "type": "integer",
+            "title": "Node Min Count"
+          },
+          "node_max_count": {
+            "type": "integer",
+            "title": "Node Max Count"
+          },
+          "provider_region": {
+            "type": "string",
+            "title": "Provider Region"
+          },
+          "tshirt_size": {
+            "type": "string",
+            "title": "Tshirt Size"
+          },
+          "infra_revision": {
+            "type": "string",
+            "title": "Infra Revision"
+          },
+          "kubernetes_version": {
+            "type": "string",
+            "title": "Kubernetes Version"
+          },
+          "appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appd Id"
+          },
+          "authorized_api_ip_ranges": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authorized Api Ip Ranges"
+          },
+          "dns_zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dns Zone"
+          },
+          "logging_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logging Retention Period"
+          },
+          "tracing_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracing Retention Period"
+          },
+          "pod_cidr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pod Cidr"
+          },
+          "service_cidr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Cidr"
+          },
+          "owner_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Group"
+          },
+          "cmdb_app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb App Id"
+          },
+          "cmdb_appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb Appd Id"
+          },
+          "network_cidr": {
+            "type": "string",
+            "title": "Network Cidr"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClusterStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "uptime_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uptime Period"
+          },
+          "gateway_api_enabled": {
+            "type": "boolean",
+            "title": "Gateway Api Enabled"
+          },
+          "domain_allowlist": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Allowlist"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/FeatureToggleRead"
+            },
+            "type": "array",
+            "title": "Features"
+          },
+          "user_features": {
+            "items": {
+              "$ref": "#/components/schemas/UserFeatureRead"
+            },
+            "type": "array",
+            "title": "User Features"
+          },
+          "client_namespaces": {
+            "items": {
+              "$ref": "#/components/schemas/ClientNamespaceRead"
+            },
+            "type": "array",
+            "title": "Client Namespaces"
+          },
+          "additional_node_pools": {
+            "items": {
+              "$ref": "#/components/schemas/AdditionalNodePoolRead"
+            },
+            "type": "array",
+            "title": "Additional Node Pools"
+          },
+          "teams_webhooks": {
+            "items": {
+              "$ref": "#/components/schemas/TeamsWebhookRead"
+            },
+            "type": "array",
+            "title": "Teams Webhooks"
+          },
+          "client_otlp_endpoints": {
+            "items": {
+              "$ref": "#/components/schemas/ClientOTLPEndpointRead"
+            },
+            "type": "array",
+            "title": "Client Otlp Endpoints"
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked"
+          },
+          "is_in_downtime_window": {
+            "type": "boolean",
+            "title": "Is In Downtime Window"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "azure_sku_tier": {
+            "$ref": "#/components/schemas/AzureSkuTier"
+          },
+          "azure_subnet_name": {
+            "type": "string",
+            "title": "Azure Subnet Name"
+          },
+          "azure_vnet_name": {
+            "type": "string",
+            "title": "Azure Vnet Name"
+          },
+          "azure_vnet_resource_group": {
+            "type": "string",
+            "title": "Azure Vnet Resource Group"
+          },
+          "dns_service_ip": {
+            "type": "string",
+            "title": "Dns Service Ip"
+          },
+          "mi_agentpool_object_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mi Agentpool Object Id"
+          },
+          "mi_cluster_object_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mi Cluster Object Id"
+          },
+          "storage_classes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StorageClassPayloadRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "subscription",
+          "provider",
+          "release",
+          "environment",
+          "internal",
+          "repository",
+          "multi_tenant",
+          "node_min_count",
+          "node_max_count",
+          "provider_region",
+          "tshirt_size",
+          "infra_revision",
+          "kubernetes_version",
+          "network_cidr",
+          "gateway_api_enabled",
+          "domain_allowlist",
+          "features",
+          "user_features",
+          "client_namespaces",
+          "additional_node_pools",
+          "teams_webhooks",
+          "client_otlp_endpoints",
+          "locked",
+          "is_in_downtime_window",
+          "azure_sku_tier",
+          "azure_subnet_name",
+          "azure_vnet_name",
+          "azure_vnet_resource_group",
+          "dns_service_ip"
+        ],
+        "title": "AzureClusterRead"
+      },
+      "AzureCrossAccountBlobStorage": {
+        "properties": {
+          "subscription_id": {
+            "type": "string",
+            "title": "Subscription Id"
+          },
+          "storage_account": {
+            "type": "string",
+            "title": "Storage Account"
+          },
+          "resource_group": {
+            "type": "string",
+            "title": "Resource Group"
+          },
+          "sku_name": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AzureStorageClassSKU"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "Standard_LRS"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 63,
+                "minLength": 1,
+                "pattern": "^([a-z0-9][a-z0-9-]?)*[a-z0-9]$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "subscription_id",
+          "storage_account",
+          "resource_group"
+        ],
+        "title": "AzureCrossAccountBlobStorage"
+      },
+      "AzureSkuTier": {
+        "type": "string",
+        "enum": [
+          "Free",
+          "Standard"
+        ],
+        "title": "AzureSkuTier"
+      },
+      "AzureStorageClassSKU": {
+        "type": "string",
+        "enum": [
+          "Standard_LRS",
+          "Premium_LRS"
+        ],
+        "title": "AzureStorageClassSKU"
+      },
+      "AzureUltraSSDStorageClass": {
+        "properties": {
+          "iops": {
+            "type": "integer",
+            "maximum": 400000.0,
+            "minimum": 1200.0,
+            "title": "Iops"
+          },
+          "throughput": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 300.0,
+            "title": "Throughput"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "iops",
+          "throughput"
+        ],
+        "title": "AzureUltraSSDStorageClass"
+      },
+      "BulkClusterStatusUpdateRequest": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ClusterStatus"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "BulkClusterStatusUpdateRequest"
+      },
+      "BulkClusterStatusUpdateResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ClusterStatusSummary"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "count",
+          "items"
+        ],
+        "title": "BulkClusterStatusUpdateResponse"
+      },
+      "ClientNamespaceRead": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "consumed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^APPD-[0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consumed By"
+          },
+          "admin": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Admin"
+          },
+          "viewer": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Viewer"
+          },
+          "editor": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Editor"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "admin"
+        ],
+        "title": "ClientNamespaceRead"
+      },
+      "ClientNamespaceWrite": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "consumed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^APPD-[0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consumed By"
+          },
+          "admin": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Admin"
+          },
+          "viewer": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Viewer"
+          },
+          "editor": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Editor"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "admin"
+        ],
+        "title": "ClientNamespaceWrite"
+      },
+      "ClientOTLPEndpointRead": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "endpoint_type": {
+            "$ref": "#/components/schemas/EndpointType"
+          },
+          "endpoint": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Endpoint"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/OTLPSignal"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Signals"
+          },
+          "auth": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OTLPAuth"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OTLPConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "endpoint_type",
+          "endpoint",
+          "signals"
+        ],
+        "title": "ClientOTLPEndpointRead"
+      },
+      "ClientOTLPEndpointWrite": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "endpoint_type": {
+            "$ref": "#/components/schemas/EndpointType"
+          },
+          "endpoint": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Endpoint"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/OTLPSignal"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Signals"
+          },
+          "auth": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OTLPAuth"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OTLPConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "endpoint_type",
+          "endpoint",
+          "signals"
+        ],
+        "title": "ClientOTLPEndpointWrite"
+      },
+      "ClusterDeleteResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ClusterDeleteResponse"
+      },
+      "ClusterListResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "items": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/AwsClusterRead"
+                },
+                {
+                  "$ref": "#/components/schemas/AzureClusterRead"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "provider",
+                "mapping": {
+                  "aws": "#/components/schemas/AwsClusterRead",
+                  "azure": "#/components/schemas/AzureClusterRead"
+                }
+              }
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "count",
+          "items"
+        ],
+        "title": "ClusterListResponse"
+      },
+      "ClusterLockListResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ClusterLockRead"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "count",
+          "items"
+        ],
+        "title": "ClusterLockListResponse"
+      },
+      "ClusterLockRead": {
+        "properties": {
+          "cluster_name": {
+            "type": "string",
+            "title": "Cluster Name"
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked"
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner"
+          },
+          "timeout_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timeout At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cluster_name",
+          "locked",
+          "timeout_at",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ClusterLockRead"
+      },
+      "ClusterOrderBy": {
+        "type": "string",
+        "enum": [
+          "id",
+          "name",
+          "cmdb_app_id"
+        ],
+        "title": "ClusterOrderBy"
+      },
+      "ClusterPatch": {
+        "properties": {
+          "release": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Release"
+          },
+          "node_min_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Node Min Count"
+          },
+          "node_max_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Node Max Count"
+          },
+          "tshirt_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tshirt Size"
+          },
+          "infra_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Infra Revision"
+          },
+          "kubernetes_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kubernetes Version"
+          },
+          "owner_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Group"
+          },
+          "cmdb_appd_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cmdb Appd Id"
+          },
+          "environment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Environment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "features": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FeatureToggleCreate"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Features"
+          },
+          "user_features": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/UserFeatureWrite"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Features"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClusterStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "client_namespaces": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ClientNamespaceWrite"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Namespaces"
+          },
+          "logging_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logging Retention Period"
+          },
+          "tracing_retention_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracing Retention Period"
+          },
+          "additional_node_pools": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AdditionalNodePoolWrite"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Additional Node Pools"
+          },
+          "uptime_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uptime Period"
+          },
+          "multi_tenant": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Multi Tenant"
+          },
+          "gateway_api_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gateway Api Enabled"
+          },
+          "domain_allowlist": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain Allowlist"
+          },
+          "teams_webhooks": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TeamsWebhookWrite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "client_otlp_endpoints": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ClientOTLPEndpointWrite"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Otlp Endpoints"
+          },
+          "aws_vpc_endpoint_remote_account_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aws Vpc Endpoint Remote Account Ids"
+          },
+          "aws_remote_account_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aws Remote Account Ids"
+          },
+          "vpc_endpoint_service_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vpc Endpoint Service Name"
+          },
+          "vpc_endpoint_service_ingress_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vpc Endpoint Service Ingress Name"
+          },
+          "cluster_oidc_issuer_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cluster Oidc Issuer Url"
+          },
+          "azure_sku_tier": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AzureSkuTier"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mi_agentpool_object_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mi Agentpool Object Id"
+          },
+          "mi_cluster_object_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mi Cluster Object Id"
+          },
+          "storage_classes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StorageClassPayloadWrite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ClusterPatch"
+      },
+      "ClusterStatus": {
+        "type": "string",
+        "enum": [
+          "running",
+          "freeze"
+        ],
+        "title": "ClusterStatus"
+      },
+      "ClusterStatusListResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ClusterStatusSummary"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "count",
+          "items"
+        ],
+        "title": "ClusterStatusListResponse"
+      },
+      "ClusterStatusSummary": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClusterStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "ClusterStatusSummary"
+      },
+      "EndpointType": {
+        "type": "string",
+        "enum": [
+          "otlp",
+          "splunk",
+          "grafanacloud"
+        ],
+        "title": "EndpointType"
+      },
+      "Environment": {
+        "type": "string",
+        "enum": [
+          "test",
+          "development",
+          "integration",
+          "pre-production",
+          "production"
+        ],
+        "title": "Environment"
+      },
+      "FeatureConfig": {
+        "properties": {},
+        "additionalProperties": true,
+        "type": "object",
+        "title": "FeatureConfig",
+        "description": "Arbitrary feature configuration — allows extra fields."
+      },
+      "FeatureConstraint": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "operator": {
+            "$ref": "#/components/schemas/FeatureOperator"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "values": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Values"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "key",
+          "operator"
+        ],
+        "title": "FeatureConstraint"
+      },
+      "FeatureCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "feature_type": {
+            "$ref": "#/components/schemas/FeatureType",
+            "default": "optional"
+          },
+          "dependencies": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependencies"
+          },
+          "constraints": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FeatureConstraint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Constraints"
+          },
+          "namespaced": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Namespaced"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "FeatureCreate",
+        "description": "Schema for creating a feature (used inside release creation)."
+      },
+      "FeatureDeleteResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "FeatureDeleteResponse"
+      },
+      "FeatureListResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FeatureRead"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "count",
+          "items"
+        ],
+        "title": "FeatureListResponse"
+      },
+      "FeatureOperator": {
+        "type": "string",
+        "enum": [
+          "equals",
+          "not_equals",
+          "in",
+          "not_in"
+        ],
+        "title": "FeatureOperator"
+      },
+      "FeatureRead": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "feature_type": {
+            "$ref": "#/components/schemas/FeatureType",
+            "default": "optional"
+          },
+          "dependencies": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependencies"
+          },
+          "constraints": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FeatureConstraint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Constraints"
+          },
+          "namespaced": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Namespaced"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "id"
+        ],
+        "title": "FeatureRead",
+        "description": "Feature as returned from the API."
+      },
+      "FeatureToggleCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "feature_type": {
+            "$ref": "#/components/schemas/FeatureType",
+            "default": "optional"
+          },
+          "dependencies": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependencies"
+          },
+          "constraints": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FeatureConstraint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Constraints"
+          },
+          "namespaced": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Namespaced"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "default": false
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FeatureConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "FeatureToggleCreate",
+        "description": "Feature toggle for cluster create/patch — includes enabled + config."
+      },
+      "FeatureToggleRead": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "feature_type": {
+            "$ref": "#/components/schemas/FeatureType",
+            "default": "optional"
+          },
+          "dependencies": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependencies"
+          },
+          "constraints": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FeatureConstraint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Constraints"
+          },
+          "namespaced": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Namespaced"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "default": false
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FeatureConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "id"
+        ],
+        "title": "FeatureToggleRead",
+        "description": "Feature toggle as returned on a cluster."
+      },
+      "FeatureType": {
+        "type": "string",
+        "enum": [
+          "core",
+          "optional"
+        ],
+        "title": "FeatureType"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "OTLPAuth": {
+        "properties": {
+          "auth_type": {
+            "$ref": "#/components/schemas/OTLPAuthType"
+          },
+          "secret_name": {
+            "type": "string",
+            "title": "Secret Name"
+          },
+          "secret_namespace": {
+            "type": "string",
+            "title": "Secret Namespace"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "auth_type",
+          "secret_name",
+          "secret_namespace"
+        ],
+        "title": "OTLPAuth"
+      },
+      "OTLPAuthType": {
+        "type": "string",
+        "enum": [
+          "basic",
+          "header",
+          "splunk"
+        ],
+        "title": "OTLPAuthType"
+      },
+      "OTLPConfig": {
+        "properties": {
+          "required_attributes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Attributes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "OTLPConfig"
+      },
+      "OTLPSignal": {
+        "type": "string",
+        "enum": [
+          "logs",
+          "traces",
+          "metrics"
+        ],
+        "title": "OTLPSignal"
+      },
+      "OperationCreate": {
+        "properties": {
+          "operation_type": {
+            "type": "string",
+            "title": "Operation Type"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "cicd_url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Cicd Url"
+          },
+          "timestamp": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "operation_type",
+          "status",
+          "cicd_url"
+        ],
+        "title": "OperationCreate"
+      },
+      "OperationListResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OperationRead"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "count",
+          "items"
+        ],
+        "title": "OperationListResponse"
+      },
+      "OperationRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "cluster_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cluster Id"
+          },
+          "operation_type": {
+            "type": "string",
+            "title": "Operation Type"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "cicd_url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Cicd Url"
+          },
+          "timestamp": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "operation_type",
+          "status",
+          "cicd_url"
+        ],
+        "title": "OperationRead"
+      },
+      "Provider": {
+        "type": "string",
+        "enum": [
+          "aws",
+          "azure"
+        ],
+        "title": "Provider"
+      },
+      "ReleaseClusterLockRequest": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "title": "ReleaseClusterLockRequest"
+      },
+      "ReleaseClusterLockResponse": {
+        "properties": {
+          "cluster_name": {
+            "type": "string",
+            "title": "Cluster Name"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cluster_name",
+          "message"
+        ],
+        "title": "ReleaseClusterLockResponse"
+      },
+      "ReleaseCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/Provider"
+          },
+          "reserved_namespaces": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reserved Namespaces"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/FeatureCreate"
+            },
+            "type": "array",
+            "title": "Features"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "provider"
+        ],
+        "title": "ReleaseCreate"
+      },
+      "ReleaseDeleteResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ReleaseDeleteResponse"
+      },
+      "ReleaseListResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReleaseRead"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "count",
+          "items"
+        ],
+        "title": "ReleaseListResponse"
+      },
+      "ReleaseOrderBy": {
+        "type": "string",
+        "enum": [
+          "id",
+          "name"
+        ],
+        "title": "ReleaseOrderBy"
+      },
+      "ReleaseRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/Provider"
+          },
+          "reserved_namespaces": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reserved Namespaces"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/FeatureRead"
+            },
+            "type": "array",
+            "title": "Features"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "provider"
+        ],
+        "title": "ReleaseRead"
+      },
+      "StorageClassPayloadRead": {
+        "properties": {
+          "remote": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AzureCrossAccountBlobStorage"
+            },
+            "type": "object",
+            "title": "Remote"
+          },
+          "ultra_ssd": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AzureUltraSSDStorageClass"
+            },
+            "type": "object",
+            "title": "Ultra Ssd"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "StorageClassPayloadRead"
+      },
+      "StorageClassPayloadWrite": {
+        "properties": {
+          "remote": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AzureCrossAccountBlobStorage"
+            },
+            "type": "object",
+            "title": "Remote"
+          },
+          "ultra_ssd": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AzureUltraSSDStorageClass"
+            },
+            "type": "object",
+            "title": "Ultra Ssd"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "StorageClassPayloadWrite"
+      },
+      "TeamsWebhookRead": {
+        "properties": {
+          "webhook_type": {
+            "$ref": "#/components/schemas/WebhookType"
+          },
+          "level": {
+            "$ref": "#/components/schemas/WebhookLevel"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Url"
+          },
+          "webhook_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Webhook Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "webhook_type",
+          "level",
+          "url",
+          "webhook_id"
+        ],
+        "title": "TeamsWebhookRead"
+      },
+      "TeamsWebhookWrite": {
+        "properties": {
+          "customer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WebhookChannelWrite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WebhookChannelWrite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TeamsWebhookWrite"
+      },
+      "UserFeatureRead": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "namespace": {
+            "type": "string",
+            "title": "Namespace"
+          },
+          "repo_url": {
+            "type": "string",
+            "title": "Repo Url"
+          },
+          "commit_hash": {
+            "type": "string",
+            "title": "Commit Hash"
+          },
+          "helm_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Helm Path"
+          },
+          "values_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Values Path"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "namespace",
+          "repo_url",
+          "commit_hash"
+        ],
+        "title": "UserFeatureRead"
+      },
+      "UserFeatureWrite": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "namespace": {
+            "type": "string",
+            "title": "Namespace"
+          },
+          "repo_url": {
+            "type": "string",
+            "title": "Repo Url"
+          },
+          "commit_hash": {
+            "type": "string",
+            "title": "Commit Hash"
+          },
+          "helm_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Helm Path"
+          },
+          "values_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Values Path"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "namespace",
+          "repo_url",
+          "commit_hash"
+        ],
+        "title": "UserFeatureWrite"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WebhookChannelWrite": {
+        "properties": {
+          "all": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "format": "uri"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "All"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "WebhookChannelWrite"
+      },
+      "WebhookLevel": {
+        "type": "string",
+        "enum": [
+          "all"
+        ],
+        "title": "WebhookLevel"
+      },
+      "WebhookType": {
+        "type": "string",
+        "enum": [
+          "platform",
+          "customer"
+        ],
+        "title": "WebhookType"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBasic": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}

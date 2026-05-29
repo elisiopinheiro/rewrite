@@ -1,0 +1,25 @@
+environment: prod
+
+image:
+  repository: 688376064307.dkr.ecr.eu-central-1.amazonaws.com/clusters-metadata-api
+
+ingress:
+  enabled: true
+  certManagerEnabled: true
+  hosts:
+    - host: clusters-metadata-api-scp.apps.4wm-services.eu-central-1.aws.cloud.bmw
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: clusters-metadata-api-partner.apps.4wm-services.eu-central-1.aws.cloud.bmw
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: tls
+      hosts:
+        - clusters-metadata-api-scp.apps.4wm-services.eu-central-1.aws.cloud.bmw
+        - clusters-metadata-api-partner.apps.4wm-services.eu-central-1.aws.cloud.bmw
+
+database:
+  host: clusters-metadata-api-prod-master.cwq9fxffu0cw.eu-central-1.rds.amazonaws.com

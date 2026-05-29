@@ -1,0 +1,83 @@
+{{/*
+  This file is only to deploy the helm chart locally for TESTS
+*/}}
+{{- if not .Values.database.external }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "clusters-metadata-api.databaseLabel" . | nindent 4 }}
+  name: {{ include "clusters-metadata-api.databaseName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "clusters-metadata-api.databaseLabel" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "clusters-metadata-api.databaseLabel" . | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      volumes:
+      - name: pg-data
+        emptyDir: {}
+      containers:
+      - name: database
+        image: 845910084933.dkr.ecr.eu-central-1.amazonaws.com/postgres:14.2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+          - mountPath: "/var/lib/postgresql/data"
+            name: pg-data
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 200m
+            memory: 150Mi
+        env:
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/pg-data"
+        - name: POSTGRES_DB
+          value: {{ .Values.database.name }}
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: {{ include "clusters-metadata-api.fullname" . }}-db-credentials
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: {{ include "clusters-metadata-api.fullname" . }}-db-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "clusters-metadata-api.databaseLabel" . | nindent 4 }}
+  name: {{ include "clusters-metadata-api.databaseHost" . }}
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    {{- include "clusters-metadata-api.databaseLabel" . | nindent 4 }}
+{{- end }}

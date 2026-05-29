@@ -1,0 +1,20 @@
+environment: int
+
+image:
+  repository: 845910084933.dkr.ecr.eu-central-1.amazonaws.com/clusters-metadata-api
+
+ingress:
+  enabled: true
+  certManagerEnabled: true
+  hosts:
+    - host: clusters-metadata-api-int.apps.4wm-shared-services-int.eu-central-1.aws.cloud.bmw
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: tls
+      hosts:
+        - clusters-metadata-api-int.apps.4wm-shared-services-int.eu-central-1.aws.cloud.bmw
+
+database:
+  host: clusters-metadata-api-int-master.calxwmhjhlhu.eu-central-1.rds.amazonaws.com

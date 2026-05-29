@@ -1,0 +1,26 @@
+environment: int
+
+image:
+  repository: 845910084933.dkr.ecr.eu-central-1.amazonaws.com/clusters-metadata-api
+  tag: <IMAGE_TAG>
+
+ingress:
+  enabled: true
+  certManagerEnabled: true
+  hosts:
+    - host: clusters-metadata-api-test.apps.<CLUSTER_DNS>
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: tls
+      hosts:
+        - clusters-metadata-api-test.apps.<CLUSTER_DNS>
+
+replicas: 1
+
+autoscaling:
+  enabled: false
+
+database:
+  external: false

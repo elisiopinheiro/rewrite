@@ -1,0 +1,50 @@
+nameOverride: clusters-metadata-api-partner
+
+api:
+  command: ["python", "-m", "uvicorn", "app.partner:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  vault_credentials:
+    - secretName: m4w-api-credentials
+      path: "applications/clusters-metadata-api-{{ .Values.environment }}/api"
+      properties:
+        - secretKey: "BASIC_M4W_API_USERNAME"
+          property: "username"
+        - secretKey: "BASIC_M4W_API_PASSWORD"
+          property: "password"
+    - secretName: cloud-api-credentials
+      path: "applications/clusters-metadata-api-{{ .Values.environment }}/api"
+      properties:
+        - secretKey: "BASIC_CLOUD_API_USERNAME"
+          property: "cloud-username"
+        - secretKey: "BASIC_CLOUD_API_PASSWORD"
+          property: "cloud-password"
+    - secretName: scp-api-credentials
+      path: "applications/clusters-metadata-api-{{ .Values.environment }}/api"
+      properties:
+        - secretKey: "BASIC_SCP_API_USERNAME"
+          property: "scp-username"
+        - secretKey: "BASIC_SCP_API_PASSWORD"
+          property: "scp-password"
+    - secretName: solar-api-credentials
+      path: "applications/clusters-metadata-api-{{ .Values.environment }}/api"
+      properties:
+        - secretKey: "BASIC_SOLAR_API_USERNAME"
+          property: "solar-username"
+        - secretKey: "BASIC_SOLAR_API_PASSWORD"
+          property: "solar-password"
+
+replicas: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 200m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+
+initDb:
+  enabled: false

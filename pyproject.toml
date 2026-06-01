@@ -1,7 +1,7 @@
 [project]
 name = "clusters-metadata-api"
 version = "3.0.0"
-description = "Clusters Metadata API — canonical metadata service"
+description = "Clusters Metadata API"
 authors = [
     { name = "Team Isetta", email = "teamisettainternal@criticaltechworks.com" },
 ]

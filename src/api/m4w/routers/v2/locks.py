@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 
 from api.m4w.auth import validate_credentials
 from api.shared.logger import logger
-from api.shared.models.clusters import ClusterLock
+from api.shared.models.clusters import ClusterLockRead
 from api.shared.repository.cluster_repository import ClusterRepository
 
 router = APIRouter(tags=["Locks v2"])
@@ -14,7 +14,7 @@ router = APIRouter(tags=["Locks v2"])
 
 @router.get(
     "/v2/locks",
-    response_model=List[ClusterLock],
+    response_model=List[ClusterLockRead],
 )
 def get_clusters_locks_v2(
     cluster_name: Union[str, None] = None,
@@ -23,7 +23,7 @@ def get_clusters_locks_v2(
     token: Union[str, None] = None,
     username: str = Depends(validate_credentials),
     cluster_repository: ClusterRepository = Depends(ClusterRepository),
-) -> List[ClusterLock]:
+) -> List[ClusterLockRead]:
     """
     \f Method to get cluster locks
 

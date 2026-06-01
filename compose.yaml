@@ -15,6 +15,23 @@ services:
       timeout: 3s
       retries: 5
 
+  # One-shot schema bootstrap: on a fresh local DB the baseline runs and builds
+  # the full schema; on an existing one `upgrade head` is a no-op.
+  migrate:
+    build:
+      context: .
+      target: m4w
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DB_HOST: db
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+
   api:
     build:
       context: .
@@ -23,9 +40,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        restart: true
+      migrate:
+        condition: service_completed_successfully
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       DB_HOST: db
       APP_ENVIRONMENT: dev
@@ -50,9 +69,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        restart: true
+      migrate:
+        condition: service_completed_successfully
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       DB_HOST: db
       APP_ENVIRONMENT: dev

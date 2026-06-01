@@ -9,12 +9,14 @@ repos:
         args: [--fix]
       - id: ruff-format
 
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.99.0
+  - repo: local
     hooks:
-      - id: terraform_fmt
-      - id: terraform_tflint
-        args: ["--args=--config=__GIT_WORKING_DIR__/.tflint.hcl"]
+      - id: mypy
+        name: mypy
+        entry: uv run mypy src
+        language: system
+        types: [python]
+        pass_filenames: false
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

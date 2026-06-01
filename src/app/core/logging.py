@@ -8,9 +8,7 @@ from pythonjsonlogger import jsonlogger
 
 
 class _JsonFormatter(jsonlogger.JsonFormatter):
-    def add_fields(
-        self, log_record: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
-    ) -> None:
+    def add_fields(self, log_record: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]) -> None:
         super().add_fields(log_record, record, message_dict)
         if "timestamp" not in log_record:
             log_record["timestamp"] = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")

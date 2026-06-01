@@ -81,12 +81,12 @@ class TestCreateCluster:
         authed_client.post(f"{API}/clusters", json=payload)
         response = authed_client.post(f"{API}/clusters", json=payload)
         assert response.status_code == 409
-        assert response.json()["detail"]["title"] == "Cluster already exists"
+        assert response.json()["title"] == "Cluster already exists"
 
     def test_create_with_unknown_release_returns_422(self, authed_client: TestClient):
         response = authed_client.post(f"{API}/clusters", json=make_cluster_data(release="missing-release"))
         assert response.status_code == 422
-        assert response.json()["detail"]["title"] == "Release not found"
+        assert response.json()["title"] == "Release not found"
 
     def test_create_with_nested_fields(self, authed_client: TestClient):
         authed_client.post(f"{API}/releases", json=make_release_data(provider="azure"))

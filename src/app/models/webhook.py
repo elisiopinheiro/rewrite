@@ -20,10 +20,10 @@ class TeamsWebhook(Base):
     __table_args__ = (UniqueConstraint("webhook_id", name="teamswebhook_webhook_id_uc"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    type: Mapped[str] = mapped_column(nullable=False)
-    level: Mapped[str] = mapped_column(nullable=False)
-    url: Mapped[str] = mapped_column(nullable=False)
-    webhook_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    type: Mapped[str]
+    level: Mapped[str]
+    url: Mapped[str]
+    webhook_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True))
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id", ondelete="CASCADE"), index=True)
 
     cluster: Mapped[Cluster] = relationship(back_populates="teams_webhooks")

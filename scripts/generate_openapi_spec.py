@@ -13,7 +13,9 @@ def generate_openapi_spec() -> None:
     output_file = project_root / "openapi.json"
 
     with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(openapi_schema, f, indent=2, ensure_ascii=False)
+        # sort_keys keeps the committed spec deterministic so diffs only reflect
+        # real contract changes (the CI freshness check relies on this).
+        json.dump(openapi_schema, f, indent=2, ensure_ascii=False, sort_keys=True)
         f.write("\n")
 
 

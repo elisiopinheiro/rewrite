@@ -46,5 +46,9 @@ resources:
 autoscaling:
   enabled: false
 
+# The partner app is read-only and does not expose /metrics, so no ServiceMonitor.
+serviceMonitor:
+  enabled: false
+
 initDb:
   enabled: false

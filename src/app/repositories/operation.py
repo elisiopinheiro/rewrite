@@ -14,7 +14,7 @@ class OperationRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def list(
+    def list_operations(
         self,
         *,
         cluster_id: int | None = None,
@@ -37,7 +37,7 @@ class OperationRepository:
         return list(self.session.scalars(statement).all())
 
     def list_by_cluster_id(self, cluster_id: int) -> list[Operation]:
-        return self.list(cluster_id=cluster_id)
+        return self.list_operations(cluster_id=cluster_id)
 
     def add(self, operation: Operation) -> Operation:
         self.session.add(operation)

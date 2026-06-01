@@ -17,10 +17,10 @@ class AdditionalNodePool(Base):
     __tablename__ = "additionalnodepool"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(nullable=False)
-    node_min_count: Mapped[int] = mapped_column(nullable=False)
-    node_max_count: Mapped[int] = mapped_column(nullable=False)
-    tshirt_size: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str]
+    node_min_count: Mapped[int]
+    node_max_count: Mapped[int]
+    tshirt_size: Mapped[str]
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id", ondelete="CASCADE"), index=True)
 
     cluster: Mapped[Cluster] = relationship(back_populates="additional_node_pools")

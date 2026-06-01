@@ -1,3 +1,31 @@
-compose.yaml
-.venv
+# Keep the build context lean. The Dockerfile only copies pyproject.toml,
+# uv.lock, .python-version, src/, alembic.ini and migrations/.
+.git
 .gitignore
+.github
+.venv
+**/__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.mypy_cache
+htmlcov
+.coverage
+compose.yaml
+.dockerignore
+.env
+.env.example
+.vscode
+tests
+applications
+scripts
+sdk-config.yml
+openapi.json
+*.md
+.editorconfig
+.pre-commit-config.yaml
+.terraform-docs.yaml
+.tflint.hcl
+sonar-project.properties
+release-please-config.json
+.release-please-manifest.json

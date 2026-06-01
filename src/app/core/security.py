@@ -23,9 +23,9 @@ def _unauthorized() -> HTTPException:
 
 
 def _check(credentials: HTTPBasicCredentials, username: str, password: str) -> bool:
-    return secrets.compare_digest(credentials.username.encode("utf8"), username.encode("utf8")) and secrets.compare_digest(
-        credentials.password.encode("utf8"), password.encode("utf8")
-    )
+    return secrets.compare_digest(
+        credentials.username.encode("utf8"), username.encode("utf8")
+    ) and secrets.compare_digest(credentials.password.encode("utf8"), password.encode("utf8"))
 
 
 def validate_m4w_credentials(credentials: Credentials) -> str:
@@ -46,9 +46,6 @@ def validate_partner_credentials(credentials: Credentials) -> str:
     if not any(_check(credentials, u, p) for u, p in partner_accounts):
         raise _unauthorized()
     return credentials.username
-
-
-PartnerUser = Annotated[str, Depends(validate_partner_credentials)]
 
 
 class Role(StrEnum):
@@ -72,7 +69,7 @@ def require_roles(allowed_roles: list[Role]) -> Callable[..., None]:
     """Return a dependency that checks if the authenticated user has one of the allowed roles."""
     effective_roles = [*allowed_roles, Role.M4W]
 
-    def _validate(username: PartnerUser) -> None:
+    def _validate(username: Annotated[str, Depends(validate_partner_credentials)]) -> None:
         user_roles = _get_user_roles(username)
         if not any(role in effective_roles for role in user_roles):
             raise HTTPException(

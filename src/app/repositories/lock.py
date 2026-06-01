@@ -15,7 +15,7 @@ class LockRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def list(
+    def list_locks(
         self,
         *,
         cluster_name: str | None = None,

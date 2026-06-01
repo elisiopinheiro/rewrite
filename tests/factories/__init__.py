@@ -23,14 +23,13 @@ def make_cluster_data(*, name: str = "test-cluster", provider: str = "aws", **ov
         "network_cidr": "10.0.0.0/16",
     }
     if provider == "aws":
+        # Optional vpc/oidc fields are intentionally omitted: they persist as NULL
+        # (v3 normalized legacy empty strings to NULL).
         base.update(
             {
                 "aws_vpc": "vpc-12345",
                 "aws_vpc_endpoint_remote_account_ids": [],
                 "aws_remote_account_ids": [],
-                "vpc_endpoint_service_name": "",
-                "vpc_endpoint_service_ingress_name": "",
-                "cluster_oidc_issuer_url": "",
             }
         )
     elif provider == "azure":

@@ -28,7 +28,7 @@ class ClusterLockService:
         self.session = session
 
     def list_locks(self, query: ClusterLockQuery) -> ClusterLockListResponse:
-        locks = self.repository.list(cluster_name=query.cluster_name, owner=query.owner, token=query.token)
+        locks = self.repository.list_locks(cluster_name=query.cluster_name, owner=query.owner, token=query.token)
         now = self._current_time()
         items: list[ClusterLockRead] = []
         for lock in locks:

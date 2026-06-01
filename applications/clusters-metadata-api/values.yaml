@@ -22,13 +22,6 @@ api:
       property: "username"
     - secretKey: "BASIC_API_PASSWORD"
       property: "password"
-  - secretName: backfill-credentials
-    path: "applications/clusters-metadata-api-{{ .Values.environment }}/api"
-    properties:
-    - secretKey: "BASIC_BACKFILL_USERNAME"
-      property: "backfill-username"
-    - secretKey: "BASIC_BACKFILL_PASSWORD"
-      property: "backfill-password"
 
 resources:
   requests:
@@ -99,14 +92,14 @@ ingress:
 
 initDb:
   enabled: true
-  command:
-    - "sh"
-    - "-c"
-    - "python -m alembic upgrade head"
+  # No-op on the already-migrated shared prod DB (baseline id == prod head);
+  # builds the schema on a fresh database. alembic + migrations/ ship in the image.
+  command: ["alembic", "upgrade", "head"]
 
 database:
   external: true
   host:
+  # Shared physical database with the legacy clusters-4wm service.
   name: clusters4wm
 
 namespaces:

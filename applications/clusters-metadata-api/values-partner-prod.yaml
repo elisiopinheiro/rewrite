@@ -22,4 +22,6 @@ ingress:
         - clusters-metadata-api-partner.apps.4wm-services.eu-central-1.aws.cloud.bmw
 
 database:
-  host: clusters-metadata-api-prod-master.cwq9fxffu0cw.eu-central-1.rds.amazonaws.com
+  # Shared with the legacy clusters-4wm service during coexistence — must point
+  # at the SAME physical RDS instance the legacy app uses.
+  host: clusters-4wm-prod-master.cwq9fxffu0cw.eu-central-1.rds.amazonaws.com

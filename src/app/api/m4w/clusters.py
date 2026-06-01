@@ -1,5 +1,7 @@
 """Cluster API routes."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, Query, status
 
 from app.deps import ClusterSvc, M4WUser
@@ -14,9 +16,10 @@ from app.schemas.clusters import (
     ClusterRead,
     ClusterStatusListResponse,
 )
-from app.schemas.enums import AzureSkuTier, ClusterOrderBy, ClusterStatus, Environment, Provider
 
 router = APIRouter(prefix="/clusters", tags=["clusters"])
+
+ClusterFilters = Annotated[ClusterListQuery, Query()]
 
 
 # --- Static routes MUST come before dynamic {cluster_name} to avoid path collision ---
@@ -26,45 +29,8 @@ router = APIRouter(prefix="/clusters", tags=["clusters"])
 def list_cluster_statuses(
     _user: M4WUser,
     service: ClusterSvc,
-    name: str | None = None,
-    subscription: str | None = None,
-    account_name: str | None = None,
-    cluster_status: ClusterStatus | None = Query(None, alias="status"),
-    provider: Provider | None = None,
-    release: str | None = None,
-    environment: Environment | None = None,
-    internal: bool | None = None,
-    multi_tenant: bool | None = None,
-    provider_region: str | None = None,
-    repository: str | None = None,
-    kubernetes_version: str | None = None,
-    owner_group: str | None = None,
-    cmdb_app_id: str | None = None,
-    cmdb_appd_id: str | None = None,
-    azure_sku_tier: AzureSkuTier | None = None,
-    locked: bool | None = None,
-    order_by: ClusterOrderBy = ClusterOrderBy.ID,
+    query: ClusterFilters,
 ) -> ClusterStatusListResponse:
-    query = ClusterListQuery(
-        name=name,
-        subscription=subscription,
-        account_name=account_name,
-        status=cluster_status,
-        provider=provider,
-        release=release,
-        environment=environment,
-        internal=internal,
-        multi_tenant=multi_tenant,
-        provider_region=provider_region,
-        repository=repository,
-        kubernetes_version=kubernetes_version,
-        owner_group=owner_group,
-        cmdb_app_id=cmdb_app_id,
-        cmdb_appd_id=cmdb_appd_id,
-        azure_sku_tier=azure_sku_tier,
-        locked=locked,
-        order_by=order_by,
-    )
     return service.list_cluster_statuses(query)
 
 
@@ -73,45 +39,8 @@ def update_cluster_statuses(
     _user: M4WUser,
     service: ClusterSvc,
     request: BulkClusterStatusUpdateRequest,
-    name: str | None = None,
-    subscription: str | None = None,
-    account_name: str | None = None,
-    cluster_status: ClusterStatus | None = Query(None, alias="status"),
-    provider: Provider | None = None,
-    release: str | None = None,
-    environment: Environment | None = None,
-    internal: bool | None = None,
-    multi_tenant: bool | None = None,
-    provider_region: str | None = None,
-    repository: str | None = None,
-    kubernetes_version: str | None = None,
-    owner_group: str | None = None,
-    cmdb_app_id: str | None = None,
-    cmdb_appd_id: str | None = None,
-    azure_sku_tier: AzureSkuTier | None = None,
-    locked: bool | None = None,
-    order_by: ClusterOrderBy = ClusterOrderBy.ID,
+    query: ClusterFilters,
 ) -> BulkClusterStatusUpdateResponse:
-    query = ClusterListQuery(
-        name=name,
-        subscription=subscription,
-        account_name=account_name,
-        status=cluster_status,
-        provider=provider,
-        release=release,
-        environment=environment,
-        internal=internal,
-        multi_tenant=multi_tenant,
-        provider_region=provider_region,
-        repository=repository,
-        kubernetes_version=kubernetes_version,
-        owner_group=owner_group,
-        cmdb_app_id=cmdb_app_id,
-        cmdb_appd_id=cmdb_appd_id,
-        azure_sku_tier=azure_sku_tier,
-        locked=locked,
-        order_by=order_by,
-    )
     return service.update_cluster_statuses(query, request)
 
 
@@ -122,45 +51,8 @@ def update_cluster_statuses(
 def list_clusters(
     _user: M4WUser,
     service: ClusterSvc,
-    name: str | None = None,
-    subscription: str | None = None,
-    account_name: str | None = None,
-    cluster_status: ClusterStatus | None = Query(None, alias="status"),
-    provider: Provider | None = None,
-    release: str | None = None,
-    environment: Environment | None = None,
-    internal: bool | None = None,
-    multi_tenant: bool | None = None,
-    provider_region: str | None = None,
-    repository: str | None = None,
-    kubernetes_version: str | None = None,
-    owner_group: str | None = None,
-    cmdb_app_id: str | None = None,
-    cmdb_appd_id: str | None = None,
-    azure_sku_tier: AzureSkuTier | None = None,
-    locked: bool | None = None,
-    order_by: ClusterOrderBy = ClusterOrderBy.ID,
+    query: ClusterFilters,
 ) -> ClusterListResponse:
-    query = ClusterListQuery(
-        name=name,
-        subscription=subscription,
-        account_name=account_name,
-        status=cluster_status,
-        provider=provider,
-        release=release,
-        environment=environment,
-        internal=internal,
-        multi_tenant=multi_tenant,
-        provider_region=provider_region,
-        repository=repository,
-        kubernetes_version=kubernetes_version,
-        owner_group=owner_group,
-        cmdb_app_id=cmdb_app_id,
-        cmdb_appd_id=cmdb_appd_id,
-        azure_sku_tier=azure_sku_tier,
-        locked=locked,
-        order_by=order_by,
-    )
     return service.list_clusters(query)
 
 

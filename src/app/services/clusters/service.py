@@ -47,7 +47,7 @@ class ClusterService:
         raise ProblemException(title="Release not found", detail=f"Release {release_name} not found", status=422)
 
     def _list_filtered_clusters(self, query: ClusterListQuery) -> list[Cluster]:
-        clusters = self.repository.list(order_by=query.order_by, **query.repository_filters())
+        clusters = self.repository.list_clusters(order_by=query.order_by, **query.repository_filters())
         if query.locked is not None:
             clusters = [cluster for cluster in clusters if self.mapper.is_locked(cluster) is query.locked]
         return clusters
@@ -170,5 +170,7 @@ class ClusterService:
             cluster.status = request.status
 
         self.session.commit()
-        updated_items = [ClusterStatusSummary(id=cluster.id, name=cluster.name, status=cluster.status) for cluster in clusters]
+        updated_items = [
+            ClusterStatusSummary(id=cluster.id, name=cluster.name, status=cluster.status) for cluster in clusters
+        ]
         return BulkClusterStatusUpdateResponse(count=len(updated_items), items=updated_items)

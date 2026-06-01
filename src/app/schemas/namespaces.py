@@ -31,7 +31,7 @@ class ClientNamespaceWrite(BaseModel):
     @field_validator("name")
     @classmethod
     def validate_namespace_name(cls, value: str) -> str:
-        if not re.match(r"^(?!-)[a-z0-9-]{1,63}(?<!-)$\Z", value):
+        if not re.match(r"^(?!-)[a-z0-9-]{1,63}(?<!-)\Z", value):
             raise ValueError(
                 f"Namespace '{value}' is not valid, must be between 1 and 63 chars long, "
                 "it must consist of lower case alphanumeric characters or -, "

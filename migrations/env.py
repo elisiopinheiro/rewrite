@@ -1,24 +1,22 @@
-"""Alembic environment configuration for v3 migrations."""
+"""Alembic environment configuration for the Clusters Metadata API."""
 
-import os
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import URL, engine_from_config, pool
+from sqlalchemy import create_engine, pool
 
+from app.core.config import settings
 from app.models import Base
 
 config = context.config
 
-database_url = URL.create(
-    drivername="postgresql+psycopg",
-    username=os.environ.get("DB_USERNAME", "cluster_app"),
-    password=os.environ.get("DB_PASSWORD", "password"),
-    host=os.environ.get("DB_HOST", "localhost"),
-    port=int(os.environ.get("DB_PORT", "5432")),
-    database=os.environ.get("DB_NAME", "clusters"),
-).render_as_string(hide_password=False)
-config.set_main_option("sqlalchemy.url", database_url)
+# Connection source of truth: an explicit override (used by tests) if provided,
+# otherwise the application settings. The alembic.ini URL is intentionally ignored.
+_override_url = config.attributes.get("sqlalchemy.url")
+config.set_main_option(
+    "sqlalchemy.url",
+    _override_url or settings.database_url.render_as_string(hide_password=False),
+)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -27,9 +25,8 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=config.get_main_option("sqlalchemy.url"),
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -40,17 +37,15 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    connectable = create_engine(config.get_main_option("sqlalchemy.url"), poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
+
+    connectable.dispose()
 
 
 if context.is_offline_mode():

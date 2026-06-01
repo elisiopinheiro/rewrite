@@ -110,15 +110,33 @@ flowchart LR
 ### Legacy state
 
 - the legacy service has a long Alembic chain from `2022_09_04-305ae638786e_init.py` through the most recent head
-- the legacy head revision is `b06516d16522`
+- the legacy head revision is `a1b2c3d4e5f6` (`2026_05_19-a1b2c3d4e5f6_v3_schema_fixes`)
 - existing deployed databases are already stamped with that legacy Alembic head
 
 ### Rewrite state
 
 - the rewrite branch intentionally collapses the migration history into one baseline file:
-  - `migrations/versions/2026_05_19-b06516d16522_baseline.py`
+  - `migrations/versions/2026_05_19-a1b2c3d4e5f6_baseline.py`
 - that file uses the same revision id as the legacy head:
-  - `revision = "b06516d16522"`
+  - `revision = "a1b2c3d4e5f6"`
+
+### Deploy sequencing (must hold for the no-op to be safe)
+
+1. Roll out the co-patched legacy code (clusterlock keyed by `cluster_id`,
+   kubedownscaler fields dropped, `feature.type` coercion) to **all** replicas.
+2. Apply the legacy `a1b2c3d4e5f6` migration to the shared DB. Before doing so,
+   verify there are no orphan locks (`clusterlock` rows whose `cluster_name`
+   has no matching `cluster`), since the migration deletes them.
+3. Confirm no pre-patch legacy instance is still serving.
+4. Deploy the rewrite. Its baseline id equals the prod head, so
+   `alembic upgrade head` is a no-op; the rewrite image carries `alembic` +
+   `migrations/` only so fresh (never-stamped) environments can still bootstrap.
+
+### Contract notes for the coexistence window
+
+- Errors use RFC 7807 `application/problem+json` (top-level `type`/`title`/`status`/`detail`).
+- Partner list endpoints return `200` with an empty list when nothing matches
+  (legacy returned `404` — this is an intentional, documented partner-contract change).
 
 Why this matters:
 

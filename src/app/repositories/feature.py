@@ -15,7 +15,7 @@ class FeatureRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def list(self, **filters: Any) -> list[Feature]:
+    def list_features(self, **filters: Any) -> list[Feature]:
         statement = select(Feature).filter_by(**filters).order_by(asc(Feature.id))
         return list(self.session.scalars(statement).all())
 
@@ -33,7 +33,7 @@ class FeatureRepository:
     def resolve(self, data: Mapping[str, Any]) -> Feature:
         """Find an existing feature matching the data, or return a new unsaved instance."""
         persisted_data = self._to_persisted_data(data)
-        candidates = self.list(name=persisted_data.get("name"))
+        candidates = self.list_features(name=persisted_data.get("name"))
         for candidate in candidates:
             candidate_data = self._normalize_persisted_data({key: getattr(candidate, key) for key in persisted_data})
             if candidate_data == persisted_data:

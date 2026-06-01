@@ -50,17 +50,6 @@ app.kubernetes.io/name: {{ include "clusters-metadata-api.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "clusters-metadata-api.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "clusters-metadata-api.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
-
 {{- define "clusters-metadata-api.databaseHost" -}}
 {{- if .Values.database.external }}
 {{- printf "%s" .Values.database.host }}

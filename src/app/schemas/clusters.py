@@ -50,6 +50,7 @@ class ClusterCreateBase(BaseModel):
     status: ClusterStatus | None = None
     uptime_period: str | None = None
     gateway_api_enabled: bool = False
+    headlamp_enabled: bool = False
     domain_allowlist: list[str] = Field(default_factory=list)
     features: list[FeatureToggleCreate] = Field(default_factory=list)
     client_namespaces: list[ClientNamespaceWrite] = Field(default_factory=list)
@@ -63,9 +64,10 @@ class AwsClusterCreate(ClusterCreateBase):
     aws_vpc: str
     aws_vpc_endpoint_remote_account_ids: list[str] = Field(default_factory=list)
     aws_remote_account_ids: list[str] = Field(default_factory=list)
-    vpc_endpoint_service_name: str = ""
-    vpc_endpoint_service_ingress_name: str = ""
-    cluster_oidc_issuer_url: str = ""
+    # Optional, persisted as NULL when omitted (v3 normalized empty strings to NULL).
+    vpc_endpoint_service_name: str | None = None
+    vpc_endpoint_service_ingress_name: str | None = None
+    cluster_oidc_issuer_url: str | None = None
 
 
 class AzureClusterCreate(ClusterCreateBase):
@@ -110,6 +112,7 @@ class ClusterPatch(BaseModel):
     uptime_period: str | None = None
     multi_tenant: bool | None = None
     gateway_api_enabled: bool | None = None
+    headlamp_enabled: bool | None = None
     domain_allowlist: list[str] | None = None
     teams_webhooks: TeamsWebhookWrite | None = None
     client_otlp_endpoints: list[ClientOTLPEndpointWrite] | None = None
@@ -163,6 +166,7 @@ class ClusterReadBase(BaseModel):
     status: ClusterStatus | None = None
     uptime_period: str | None = None
     gateway_api_enabled: bool
+    headlamp_enabled: bool
     domain_allowlist: list[str]
     features: list[FeatureToggleRead]
     user_features: list[UserFeatureRead]
@@ -178,21 +182,23 @@ class ClusterReadBase(BaseModel):
 
 class AwsClusterRead(ClusterReadBase):
     provider: Literal["aws"]
-    aws_vpc: str
+    # Nullable on the shared DB: v3_schema_fixes converts legacy empty strings to NULL.
+    aws_vpc: str | None = None
     aws_vpc_endpoint_remote_account_ids: list[str]
     aws_remote_account_ids: list[str]
-    vpc_endpoint_service_name: str
-    vpc_endpoint_service_ingress_name: str
-    cluster_oidc_issuer_url: str
+    vpc_endpoint_service_name: str | None = None
+    vpc_endpoint_service_ingress_name: str | None = None
+    cluster_oidc_issuer_url: str | None = None
 
 
 class AzureClusterRead(ClusterReadBase):
     provider: Literal["azure"]
-    azure_sku_tier: AzureSkuTier
-    azure_subnet_name: str
-    azure_vnet_name: str
-    azure_vnet_resource_group: str
-    dns_service_ip: str
+    # Nullable on the shared DB: these were added by later migrations / nulled by v3.
+    azure_sku_tier: AzureSkuTier | None = None
+    azure_subnet_name: str | None = None
+    azure_vnet_name: str | None = None
+    azure_vnet_resource_group: str | None = None
+    dns_service_ip: str | None = None
     mi_agentpool_object_id: str | None = None
     mi_cluster_object_id: str | None = None
     storage_classes: StorageClassPayloadRead | None = None

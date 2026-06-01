@@ -15,7 +15,7 @@ class FeatureService:
         self.session = session
 
     def list_features(self) -> FeatureListResponse:
-        features = self.repository.list()
+        features = self.repository.list_features()
         items = [self._to_read_model(feature) for feature in features]
         return FeatureListResponse(count=len(items), items=items)
 

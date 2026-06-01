@@ -18,11 +18,11 @@ class ClusterLock(Base):
     __tablename__ = "clusterlock"
 
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id", ondelete="CASCADE"), primary_key=True)
-    locked: Mapped[bool] = mapped_column(nullable=False)
-    owner: Mapped[str | None] = mapped_column(nullable=True)
-    token: Mapped[str | None] = mapped_column(nullable=True)
-    timeout_at: Mapped[datetime] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(nullable=False)
+    locked: Mapped[bool]
+    owner: Mapped[str | None]
+    token: Mapped[str | None]
+    timeout_at: Mapped[datetime]
+    created_at: Mapped[datetime]
+    updated_at: Mapped[datetime]
 
     cluster: Mapped[Cluster] = relationship(back_populates="cluster_lock")

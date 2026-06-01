@@ -7,7 +7,9 @@ from tests.factories import make_cluster_data, make_lock_request, make_release_d
 
 
 def _problem(response):
-    return response.json()["detail"]
+    """Return the RFC 7807 problem fields the tests assert on."""
+    body = response.json()
+    return {key: body[key] for key in ("title", "detail", "status")}
 
 
 def _create_release(client: TestClient, **overrides):

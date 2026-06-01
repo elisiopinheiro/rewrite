@@ -21,11 +21,16 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
+# Installed into the runtime image so the init-db job can run migrations;
+# kept out of the API runtime deps (the serving pods never import alembic).
+migrations = [
     "alembic>=1.16.0,<2.0.0",
+]
+dev = [
     "ruff>=0.8.0,<1.0.0",
     "mypy>=1.8.0,<2.0.0",
     "pre-commit>=4.0.0,<5.0.0",
+    {include-group = "migrations"},
 ]
 test = [
     "pytest>=8.0.0,<9.0.0",

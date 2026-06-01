@@ -190,6 +190,9 @@ dev = [
     { name = "pre-commit" },
     { name = "ruff" },
 ]
+migrations = [
+    { name = "alembic" },
+]
 test = [
     { name = "anyio" },
     { name = "factory-boy" },
@@ -222,6 +225,7 @@ dev = [
     { name = "pre-commit", specifier = ">=4.0.0,<5.0.0" },
     { name = "ruff", specifier = ">=0.8.0,<1.0.0" },
 ]
+migrations = [{ name = "alembic", specifier = ">=1.16.0,<2.0.0" }]
 test = [
     { name = "anyio", specifier = ">=4.0.0,<5.0.0" },
     { name = "factory-boy", specifier = ">=3.3.0,<4.0.0" },

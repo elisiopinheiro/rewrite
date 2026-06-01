@@ -24,7 +24,7 @@ class ReleaseService:
         self.session = session
 
     def list_releases(self, query: ReleaseListQuery) -> ReleaseListResponse:
-        releases = self.repository.list(name=query.name, provider=query.provider, order_by=query.order_by)
+        releases = self.repository.list_releases(name=query.name, provider=query.provider, order_by=query.order_by)
         items = [self._to_read_model(release) for release in releases]
         return ReleaseListResponse(count=len(items), items=items)
 
@@ -35,7 +35,9 @@ class ReleaseService:
         return self._to_read_model(release)
 
     def create_release(self, request: ReleaseCreate) -> ReleaseRead:
-        features = [self.feature_repository.resolve(requested_feature.model_dump()) for requested_feature in request.features]
+        features = [
+            self.feature_repository.resolve(requested_feature.model_dump()) for requested_feature in request.features
+        ]
 
         try:
             persisted = self.repository.add_from_data(request.model_dump(exclude={"features"}), features)
@@ -43,9 +45,11 @@ class ReleaseService:
         except IntegrityError as exc:
             self.session.rollback()
             raise ProblemException(title="Release already exists", detail="Release already exists", status=409) from exc
-        except SQLAlchemyError:
+        except SQLAlchemyError as exc:
             self.session.rollback()
-            raise
+            raise ProblemException(
+                title="Internal Server Error", detail="A database error occurred.", status=500
+            ) from exc
 
         stored = self.repository.get(persisted.id)
         if stored is None:
@@ -62,10 +66,14 @@ class ReleaseService:
             self.session.commit()
         except IntegrityError as exc:
             self.session.rollback()
-            raise ProblemException(title="Release delete conflict", detail="Release could not be deleted", status=409) from exc
-        except SQLAlchemyError:
+            raise ProblemException(
+                title="Release delete conflict", detail="Release could not be deleted", status=409
+            ) from exc
+        except SQLAlchemyError as exc:
             self.session.rollback()
-            raise
+            raise ProblemException(
+                title="Internal Server Error", detail="A database error occurred.", status=500
+            ) from exc
         return ReleaseDeleteResponse(message=f"Release {name} deleted successfully")
 
     @staticmethod

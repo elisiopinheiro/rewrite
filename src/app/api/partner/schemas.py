@@ -2,6 +2,8 @@
 
 from pydantic import BaseModel, ConfigDict
 
+from app.schemas.enums import Provider
+
 
 class ScpClusterRead(BaseModel):
     """Cluster subset exposed to SCP/CF partners (Azure only, non-internal)."""
@@ -12,8 +14,9 @@ class ScpClusterRead(BaseModel):
     name: str
     subscription: str
     provider_region: str
-    azure_vnet_name: str
-    azure_vnet_resource_group: str
+    # Nullable on the shared DB (v3_schema_fixes normalizes empty strings to NULL).
+    azure_vnet_name: str | None = None
+    azure_vnet_resource_group: str | None = None
     network_cidr: str
     cmdb_app_id: str | None = None
     cmdb_appd_id: str | None = None
@@ -35,7 +38,7 @@ class SolarClusterRead(BaseModel):
     name: str
     subscription: str
     account_name: str | None = None
-    provider: str
+    provider: Provider
     multi_tenant: bool
     provider_region: str
     cmdb_app_id: str | None = None

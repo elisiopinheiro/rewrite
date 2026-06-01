@@ -31,61 +31,62 @@ class Cluster(Base):
 
     # Identity
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str]
 
-    # Core fields (NOT NULL)
-    subscription: Mapped[str] = mapped_column(nullable=False)
-    provider: Mapped[str] = mapped_column(nullable=False)
-    release: Mapped[str] = mapped_column(nullable=False)
-    environment: Mapped[str] = mapped_column(nullable=False)
-    internal: Mapped[bool] = mapped_column(nullable=False)
-    repository: Mapped[str] = mapped_column(nullable=False)
-    multi_tenant: Mapped[bool] = mapped_column(default=False, nullable=False)
-    node_min_count: Mapped[int] = mapped_column(nullable=False)
-    node_max_count: Mapped[int] = mapped_column(nullable=False)
-    provider_region: Mapped[str] = mapped_column(nullable=False)
-    tshirt_size: Mapped[str] = mapped_column(nullable=False)
-    infra_revision: Mapped[str] = mapped_column(nullable=False)
-    kubernetes_version: Mapped[str] = mapped_column(nullable=False)
-    network_cidr: Mapped[str] = mapped_column(default="0.0.0.0/0", nullable=False)
-    status: Mapped[str] = mapped_column(default="running", server_default="running", nullable=False)
-    gateway_api_enabled: Mapped[bool] = mapped_column(default=False, server_default=text("false"), nullable=False)
+    # Core fields (NOT NULL inferred from the non-optional annotation)
+    subscription: Mapped[str]
+    provider: Mapped[str]
+    release: Mapped[str]
+    environment: Mapped[str]
+    internal: Mapped[bool]
+    repository: Mapped[str]
+    multi_tenant: Mapped[bool] = mapped_column(default=False)
+    node_min_count: Mapped[int]
+    node_max_count: Mapped[int]
+    provider_region: Mapped[str]
+    tshirt_size: Mapped[str]
+    infra_revision: Mapped[str]
+    kubernetes_version: Mapped[str]
+    network_cidr: Mapped[str] = mapped_column(default="0.0.0.0/0")
+    status: Mapped[str] = mapped_column(default="running", server_default="running")
+    gateway_api_enabled: Mapped[bool] = mapped_column(default=False, server_default=text("false"))
+    headlamp_enabled: Mapped[bool] = mapped_column(default=False, server_default=text("false"))
 
-    # Optional metadata (nullable)
-    account_name: Mapped[str | None] = mapped_column(nullable=True)
-    appd_id: Mapped[str | None] = mapped_column(nullable=True)
-    dns_zone: Mapped[str | None] = mapped_column(nullable=True)
-    owner_group: Mapped[str | None] = mapped_column(nullable=True)
-    cmdb_app_id: Mapped[str | None] = mapped_column(nullable=True)
-    cmdb_appd_id: Mapped[str | None] = mapped_column(nullable=True)
-    pod_cidr: Mapped[str | None] = mapped_column(nullable=True)
-    service_cidr: Mapped[str | None] = mapped_column(nullable=True)
-    logging_retention_period: Mapped[str | None] = mapped_column(nullable=True)
-    tracing_retention_period: Mapped[str | None] = mapped_column(nullable=True)
-    uptime_period: Mapped[str | None] = mapped_column(nullable=True)
-    domain_allowlist: Mapped[list[str] | None] = mapped_column(JSON, default=list, nullable=True)
-    authorized_api_ip_ranges: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
+    # Optional metadata (nullable inferred from `| None`)
+    account_name: Mapped[str | None]
+    appd_id: Mapped[str | None]
+    dns_zone: Mapped[str | None]
+    owner_group: Mapped[str | None]
+    cmdb_app_id: Mapped[str | None]
+    cmdb_appd_id: Mapped[str | None]
+    pod_cidr: Mapped[str | None]
+    service_cidr: Mapped[str | None]
+    logging_retention_period: Mapped[str | None]
+    tracing_retention_period: Mapped[str | None]
+    uptime_period: Mapped[str | None]
+    domain_allowlist: Mapped[list[str] | None] = mapped_column(JSON, default=list)
+    authorized_api_ip_ranges: Mapped[list[str] | None] = mapped_column(JSON)
 
     # AWS-specific (NULL for Azure clusters)
-    aws_vpc: Mapped[str | None] = mapped_column(nullable=True)
-    aws_vpc_endpoint_remote_account_ids: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
-    aws_remote_account_ids: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
-    vpc_endpoint_service_name: Mapped[str | None] = mapped_column(nullable=True)
-    vpc_endpoint_service_ingress_name: Mapped[str | None] = mapped_column(nullable=True)
-    cluster_oidc_issuer_url: Mapped[str | None] = mapped_column(nullable=True)
+    aws_vpc: Mapped[str | None]
+    aws_vpc_endpoint_remote_account_ids: Mapped[list[str] | None] = mapped_column(JSON)
+    aws_remote_account_ids: Mapped[list[str] | None] = mapped_column(JSON)
+    vpc_endpoint_service_name: Mapped[str | None]
+    vpc_endpoint_service_ingress_name: Mapped[str | None]
+    cluster_oidc_issuer_url: Mapped[str | None]
 
     # Azure-specific (NULL for AWS clusters)
-    azure_sku_tier: Mapped[str | None] = mapped_column(nullable=True)
-    azure_subnet_name: Mapped[str | None] = mapped_column(nullable=True)
-    azure_vnet_name: Mapped[str | None] = mapped_column(nullable=True)
-    azure_vnet_resource_group: Mapped[str | None] = mapped_column(nullable=True)
-    dns_service_ip: Mapped[str | None] = mapped_column(nullable=True)
-    mi_agentpool_object_id: Mapped[str | None] = mapped_column(nullable=True)
-    mi_cluster_object_id: Mapped[str | None] = mapped_column(nullable=True)
+    azure_sku_tier: Mapped[str | None]
+    azure_subnet_name: Mapped[str | None]
+    azure_vnet_name: Mapped[str | None]
+    azure_vnet_resource_group: Mapped[str | None]
+    dns_service_ip: Mapped[str | None]
+    mi_agentpool_object_id: Mapped[str | None]
+    mi_cluster_object_id: Mapped[str | None]
 
-    # Timestamps
-    created_at: Mapped[datetime | None] = mapped_column(server_default=text("CURRENT_TIMESTAMP"), nullable=False)
-    updated_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    # Timestamps (updated_at is maintained by a DB trigger; see the baseline migration)
+    created_at: Mapped[datetime] = mapped_column(server_default=text("CURRENT_TIMESTAMP"))
+    updated_at: Mapped[datetime | None]
 
     # Relationships
     cluster_lock: Mapped[ClusterLock | None] = relationship(
@@ -114,8 +115,8 @@ class ClusterFeature(Base):
 
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id", ondelete="CASCADE"), primary_key=True)
     feature_id: Mapped[int] = mapped_column(ForeignKey("feature.id", ondelete="CASCADE"), primary_key=True)
-    enabled: Mapped[bool] = mapped_column(default=False, nullable=False)
-    config: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    enabled: Mapped[bool] = mapped_column(default=False)
+    config: Mapped[dict[str, Any] | None] = mapped_column(JSON)
 
     cluster: Mapped[Cluster] = relationship(back_populates="features")
     feature: Mapped[Feature] = relationship(back_populates="cluster_features")

@@ -1,5 +1,7 @@
 """Cluster translator — syncs nested/association fields on create/patch."""
 
+from typing import Any
+
 from app.models.cluster import Cluster, ClusterFeature
 from app.models.feature import Feature
 from app.models.namespace import ClientNamespace
@@ -24,7 +26,7 @@ class ClusterTranslator:
         self,
         *,
         cluster: Cluster,
-        payload: dict,
+        payload: dict[str, Any],
         release_name: str | None = None,
         feature_repository: FeatureRepository,
         release_repository: ReleaseRepository,
@@ -90,12 +92,14 @@ class ClusterTranslator:
         *,
         cluster: Cluster,
         release_name: str,
-        requested_features: list[dict],
+        requested_features: list[dict[str, Any]],
         feature_repository: FeatureRepository,
         release_repository: ReleaseRepository,
     ) -> None:
         if not requested_features:
-            cluster.features = []
+            # Match legacy semantics: an empty list is a no-op, not a wipe of all
+            # (including core) features. Features are only ever rebuilt from a
+            # non-empty request. This protects the shared DB the legacy app reads.
             return
 
         release_matches = release_repository.list_by_name_and_provider(
@@ -104,7 +108,7 @@ class ClusterTranslator:
         if not release_matches:
             raise ValueError(f"Release {release_name} not found")
 
-        db_features = feature_repository.list()
+        db_features = feature_repository.list_features()
         features_by_name = {feature["name"]: feature for feature in requested_features if feature.get("enabled")}
         release = release_matches[0]
         cluster_features: list[ClusterFeature] = []
@@ -152,7 +156,7 @@ class ClusterTranslator:
         cluster.features = cluster_features
 
     @staticmethod
-    def _to_persistence_otlp_endpoint(item: dict) -> dict:
+    def _to_persistence_otlp_endpoint(item: dict[str, Any]) -> dict[str, Any]:
         """Map public schema field names to persistence field names."""
         endpoint = ClientOTLPEndpointWrite.model_validate(item) if isinstance(item, dict) else item
         payload = endpoint.model_dump(mode="json", exclude_none=True)

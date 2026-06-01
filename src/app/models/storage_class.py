@@ -18,9 +18,9 @@ class StorageClass(Base):
     __tablename__ = "storageclass"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    type: Mapped[str] = mapped_column(nullable=False)
-    name: Mapped[str] = mapped_column(nullable=False)
-    config: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    type: Mapped[str]
+    name: Mapped[str]
+    config: Mapped[dict[str, Any]] = mapped_column(JSONB)
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id", ondelete="CASCADE"), index=True)
 
     cluster: Mapped[Cluster] = relationship(back_populates="storage_classes")

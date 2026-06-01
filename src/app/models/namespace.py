@@ -17,11 +17,11 @@ class ClientNamespace(Base):
     __tablename__ = "clientnamespace"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(nullable=False)
-    consumed_by: Mapped[str | None] = mapped_column(nullable=True)
-    admin: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
-    viewer: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
-    editor: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
+    name: Mapped[str]
+    consumed_by: Mapped[str | None]
+    admin: Mapped[list[str]] = mapped_column(ARRAY(String))
+    viewer: Mapped[list[str] | None] = mapped_column(ARRAY(String))
+    editor: Mapped[list[str] | None] = mapped_column(ARRAY(String))
     cluster_id: Mapped[int] = mapped_column(ForeignKey("cluster.id", ondelete="CASCADE"), index=True)
 
     cluster: Mapped[Cluster] = relationship(back_populates="client_namespaces")

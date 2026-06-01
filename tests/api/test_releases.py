@@ -7,7 +7,9 @@ from tests.factories import make_feature_data, make_release_data
 
 
 def _problem(response):
-    return response.json()["detail"]
+    """Return the RFC 7807 problem fields the tests assert on."""
+    body = response.json()
+    return {key: body[key] for key in ("title", "detail", "status")}
 
 
 def _create_feature(client: TestClient, **overrides):

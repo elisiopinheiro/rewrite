@@ -18,7 +18,7 @@ class OperationService:
         self.session = session
 
     def list_operations(self, query: OperationListQuery) -> OperationListResponse:
-        operations = self.repository.list(
+        operations = self.repository.list_operations(
             operation_type=query.operation_type,
             status=query.status,
             cicd_url=str(query.cicd_url) if query.cicd_url is not None else None,

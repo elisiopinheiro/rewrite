@@ -59,6 +59,7 @@ class ClusterMapper:
             "status": cluster.status,
             "uptime_period": cluster.uptime_period,
             "gateway_api_enabled": cluster.gateway_api_enabled,
+            "headlamp_enabled": cluster.headlamp_enabled,
             "domain_allowlist": cluster.domain_allowlist or [],
             "created_at": cluster.created_at,
             "updated_at": cluster.updated_at,

@@ -20,16 +20,18 @@ COPY --from=uv /uv /usr/local/bin/uv
 
 WORKDIR /build
 
-# Install dependencies first (layer cache)
+# Install dependencies first (layer cache). The `migrations` group brings in
+# alembic so the init-db job can run migrations from this image; the API serving
+# pods simply never import it.
 COPY pyproject.toml uv.lock .python-version ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-install-project --no-dev
+    uv sync --frozen --no-install-project --no-dev --group migrations
 
 # Install the project itself into site-packages so the runtime image does not
 # depend on the builder stage source tree.
 COPY src/ src/
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev --no-editable
+    uv sync --frozen --no-dev --no-editable --group migrations
 
 
 # --- Stage 2: Runtime base ---
@@ -42,6 +44,11 @@ WORKDIR /app
 
 # Copy the virtual environment from builder
 COPY --from=builder /build/.venv /app/.venv
+
+# Migration assets for the init-db job. `alembic.ini` uses a relative
+# script_location, so WORKDIR (/app) must contain both it and migrations/.
+COPY alembic.ini ./
+COPY migrations ./migrations
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \

@@ -18,9 +18,9 @@ class Release(Base):
     __table_args__ = (UniqueConstraint("name", "provider", name="release_name_provider_uc"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(nullable=False)
-    provider: Mapped[str] = mapped_column(nullable=False)
-    reserved_namespaces: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    name: Mapped[str]
+    provider: Mapped[str]
+    reserved_namespaces: Mapped[list[str]] = mapped_column(JSON, default=list)
 
     features: Mapped[list[ReleaseFeature]] = relationship(back_populates="release", cascade="all, delete-orphan")
 

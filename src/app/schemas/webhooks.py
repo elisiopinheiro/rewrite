@@ -43,9 +43,10 @@ class WebhookChannelWrite(BaseModel):
             return value
         seen: set[str] = set()
         for url in value:
-            if url in seen:
+            key = str(url)
+            if key in seen:
                 raise ValueError(f"Duplicate URL at level '{WebhookLevel.ALL.value}': {url}")
-            seen.add(url)
+            seen.add(key)
         return value
 
 

@@ -94,7 +94,7 @@ initDb:
   enabled: true
   # No-op on the already-migrated shared prod DB (baseline id == prod head);
   # builds the schema on a fresh database. alembic + migrations/ ship in the image.
-  command: ["alembic", "upgrade", "head"]
+  command: ["python", "-m", "alembic", "upgrade", "head"]
 
 database:
   external: true

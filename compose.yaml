@@ -15,12 +15,12 @@ services:
       timeout: 3s
       retries: 5
 
-  # One-shot schema bootstrap: on a fresh local DB the baseline runs and builds
-  # the full schema; on an existing one `upgrade head` is a no-op.
+  # One-shot schema bootstrap: builds the schema on a fresh DB, no-op otherwise.
   migrate:
+    image: clusters-metadata-api:local
     build:
       context: .
-      target: m4w
+      target: runtime
     depends_on:
       db:
         condition: service_healthy
@@ -29,13 +29,14 @@ services:
         required: false
     environment:
       DB_HOST: db
-    command: ["alembic", "upgrade", "head"]
+    command: ["python", "-m", "alembic", "upgrade", "head"]
     restart: "no"
 
   api:
+    image: clusters-metadata-api:local
     build:
       context: .
-      target: m4w-dev
+      target: runtime
     init: true
     depends_on:
       db:
@@ -49,22 +50,28 @@ services:
       DB_HOST: db
       APP_ENVIRONMENT: dev
       WATCHFILES_FORCE_POLLING: "true"
+    # Live-reload from the bind-mounted source (overrides the image's default command).
+    command:
+      - python
+      - -m
+      - uvicorn
+      - app.main:app
+      - --host=0.0.0.0
+      - --port=8000
+      - --reload
+      - --app-dir=/app/src
+      - --reload-dir=/app/src
     ports:
       - "8000:8000"
     volumes:
       - .:/app
-      - api-venv:/app/.venv
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      - venv:/app/.venv
 
   partner:
+    image: clusters-metadata-api:local
     build:
       context: .
-      target: partner-dev
+      target: runtime
     init: true
     depends_on:
       db:
@@ -78,19 +85,22 @@ services:
       DB_HOST: db
       APP_ENVIRONMENT: dev
       WATCHFILES_FORCE_POLLING: "true"
+    command:
+      - python
+      - -m
+      - uvicorn
+      - app.partner:app
+      - --host=0.0.0.0
+      - --port=8000
+      - --reload
+      - --app-dir=/app/src
+      - --reload-dir=/app/src
     ports:
       - "8001:8000"
     volumes:
       - .:/app
-      - partner-venv:/app/.venv
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      - venv:/app/.venv
 
 volumes:
   pgdata:
-  api-venv:
-  partner-venv:
+  venv:

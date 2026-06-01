@@ -120,6 +120,20 @@ flowchart LR
 - that file uses the same revision id as the legacy head:
   - `revision = "a1b2c3d4e5f6"`
 
+### Migration ownership during coexistence
+
+Once the rewrite is deployed it is the **sole owner** of schema migrations:
+
+- Legacy receives only the one-time compatibility patch (`a1b2c3d4e5f6`) and is then
+  **frozen** — no further legacy schema migrations while the two services coexist.
+- All new migrations live in the rewrite, chained from `a1b2c3d4e5f6` forward, and must
+  stay **backward compatible / additive** so the frozen legacy app keeps working against
+  the shared database.
+- This keeps a single owner of the shared `alembic_version`. If legacy shipped another
+  migration it would advance the shared version to a revision the rewrite's squashed
+  history does not contain, and the rewrite's `alembic upgrade head` would fail
+  (`Can't locate revision ...`). Do **not** migrate the shared DB from legacy after cutover.
+
 ### Deploy sequencing (must hold for the no-op to be safe)
 
 1. Roll out the co-patched legacy code (clusterlock keyed by `cluster_id`,
@@ -140,8 +154,8 @@ flowchart LR
 
 Why this matters:
 
-- if an environment already has `alembic_version = b06516d16522`, Alembic will treat the new branch as aligned to the current DB state
-- this avoids replaying an entirely new rewrite-only revision id on top of an already-live schema
+- if an environment already has `alembic_version = a1b2c3d4e5f6`, Alembic treats the rewrite baseline as already applied and runs no DDL
+- this avoids replaying a rewrite-only revision id on top of an already-live schema
 
 ### Important migration rule during coexistence
 

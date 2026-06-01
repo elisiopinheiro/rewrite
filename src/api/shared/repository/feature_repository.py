@@ -1,7 +1,7 @@
 from typing import Any
 
 from fastapi import Depends
-from sqlalchemy import desc
+from sqlalchemy import asc
 from sqlmodel import Session
 
 from api.shared.database import get_db
@@ -25,7 +25,7 @@ class FeatureRepository:
             else:
                 sql_filters[key] = value
 
-        query = self.session.query(Feature).filter_by(**sql_filters).order_by(desc(Feature.id))
+        query = self.session.query(Feature).filter_by(**sql_filters).order_by(asc(Feature.id))
         features = query.all()
 
         if python_filters:
@@ -41,14 +41,9 @@ class FeatureRepository:
         return self.session.get(Feature, id)
 
     def save_feature(self, feature: Feature) -> Feature:
-        existing = next(filter(lambda feat: feat == feature, self.get_features(name=feature.name)), None)
-        if existing:
-            return existing
-
         self.session.add(feature)
         self.session.commit()
         self.session.refresh(feature)
-
         return feature
 
     def delete_feature(self, feature: Feature) -> dict:

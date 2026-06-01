@@ -12,7 +12,7 @@ from api.shared.models.clusters import Provider
 class SOLARClusterResponse(SQLModel):
     name: str  # Should be unique
     subscription: str
-    account_name: str
+    account_name: Optional[str] = None
     provider: str
     multi_tenant: bool
     provider_region: str

@@ -14,7 +14,6 @@ from api.shared.models.releases import (
     OrderByReleaseFields,
     ReleaseRequest,
     ReleaseResponse,
-    ReleaseUpdateRequest,
 )
 from api.shared.repository.release_repository import ReleaseRepository
 
@@ -172,42 +171,3 @@ def delete_release(
             detail="Release not found",
         )
     return release_repository.delete_release(release)
-
-
-@router.patch(
-    "/{id}",
-    response_model=ReleaseResponse,
-    responses={404: {"model": HTTPError}},
-    tags=["Releases v1"],
-)
-def update_release(
-    id: int,
-    release_update: ReleaseUpdateRequest,
-    username: str = Depends(validate_credentials),
-    release_repository: ReleaseRepository = Depends(ReleaseRepository),
-) -> ReleaseResponse:
-    """
-    \f Update a release by ID
-
-    Args:
-        id (int): Release ID
-        release_update (ReleaseUpdateRequest): Fields to update
-        username (str, optional): Username. Defaults to Depends(validate_credentials).
-        release_repository (ReleaseRepository, optional): Release repository. Defaults to Depends(ReleaseRepository).
-
-    Raises:
-        HTTPException: HTTP_404_NOT_FOUND if release does not exist
-
-    Returns:
-        ReleaseResponse: Updated release
-    """
-    logger.info("Received PATCH /v1/releases/%s request - body: %s", id, release_update.model_dump())
-    release = release_repository.get_release(id)
-
-    if not release:
-        raise HTTPException(
-            status_code=http_status.HTTP_404_NOT_FOUND,
-            detail=f"Release with id {id} not found",
-        )
-
-    return release_repository.update_release(release, release_update)

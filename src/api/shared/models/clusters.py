@@ -39,7 +39,7 @@ from api.shared.models.user_features import UserFeature, UserFeatureBase
 
 
 class ClusterLock(SQLModel, table=True):
-    cluster_name: str = Field(foreign_key="cluster.name", nullable=False, primary_key=True)
+    cluster_id: Optional[int] = Field(default=None, foreign_key="cluster.id", nullable=False, primary_key=True)
     locked: bool
     owner: Optional[str] = None
     token: Optional[str] = None
@@ -66,6 +66,16 @@ class UnlockResponse(BaseModel):
     """Response model for successful cluster unlock"""
 
     message: str
+
+
+class ClusterLockRead(BaseModel):
+    cluster_name: str
+    locked: bool
+    owner: Optional[str] = None
+    token: Optional[str] = None
+    timeout_at: datetime
+    created_at: datetime
+    updated_at: datetime
 
 
 class ClusterFeature(SQLModel, table=True):
@@ -95,7 +105,7 @@ class Cluster(SQLModel, table=True):
     operations: List[Operation] = Relationship(sa_relationship_kwargs={"cascade": "all"})
     name: str  # Should be unique
     subscription: str
-    account_name: Optional[str] = Field(sa_column_kwargs={"server_default": "", "nullable": False})
+    account_name: Optional[str] = Field(default=None, nullable=True)
     provider: Provider = Field(sa_type=SAString)
     release: str
     environment: Environment = Field(sa_type=SAString)
@@ -124,8 +134,6 @@ class Cluster(SQLModel, table=True):
         default=None,
         sa_column=Column(SAString, server_default=ClusterStatus.RUNNING.value),
     )
-    kubedownscaler_downscale_period: Optional[str] = None  # Remove after 3.41.0
-    kubedownscaler_upscale_period: Optional[str] = None  # Remove after 3.41.0
     uptime_period: Optional[Annotated[str, StringConstraints(pattern=SCALING_PERIOD_PATTERN)]] = None
     gateway_api_enabled: Optional[bool] = Field(default=False, sa_column_kwargs={"server_default": "f"}, nullable=False)
     headlamp_enabled: Optional[bool] = Field(
@@ -171,18 +179,18 @@ class Cluster(SQLModel, table=True):
     aws_vpc: Optional[str] = None
     aws_vpc_endpoint_remote_account_ids: Optional[List[str]] = Field(sa_column=Column(JSON), default=[""])
     aws_remote_account_ids: Optional[List[str]] = Field(sa_column=Column(JSON), default=[""])
-    vpc_endpoint_service_name: Optional[str] = ""
-    vpc_endpoint_service_ingress_name: Optional[str] = ""
-    cluster_oidc_issuer_url: Optional[str] = ""
+    vpc_endpoint_service_name: Optional[str] = None
+    vpc_endpoint_service_ingress_name: Optional[str] = None
+    cluster_oidc_issuer_url: Optional[str] = None
 
     # Azure specific fields
     azure_sku_tier: Optional[AzureSkuTier] = Field(default=None, sa_type=SAString)
-    azure_subnet_name: Optional[str] = ""
-    azure_vnet_name: Optional[str] = ""
-    azure_vnet_resource_group: Optional[str] = ""
-    dns_service_ip: Optional[str] = ""
-    mi_agentpool_object_id: Optional[str] = ""
-    mi_cluster_object_id: Optional[str] = ""
+    azure_subnet_name: Optional[str] = None
+    azure_vnet_name: Optional[str] = None
+    azure_vnet_resource_group: Optional[str] = None
+    dns_service_ip: Optional[str] = None
+    mi_agentpool_object_id: Optional[str] = None
+    mi_cluster_object_id: Optional[str] = None
     storage_classes: List["StorageClass"] = Relationship(
         back_populates="cluster", sa_relationship_kwargs=RELATIONSHIP_DEFAULTS
     )
@@ -304,8 +312,6 @@ class ClusterBase(BaseModel):
     cmdb_appd_id: Optional[str] = None
     network_cidr: str
     status: Optional[ClusterStatus] = None
-    kubedownscaler_downscale_period: Optional[str] = None
-    kubedownscaler_upscale_period: Optional[str] = None
     uptime_period: Optional[Annotated[str, StringConstraints(pattern=SCALING_PERIOD_PATTERN)]] = None
     gateway_api_enabled: Optional[bool] = False
     headlamp_enabled: Optional[bool] = False
@@ -323,9 +329,9 @@ class ClusterAws(ClusterBase):
     aws_vpc: str
     aws_vpc_endpoint_remote_account_ids: Optional[List[str]] = []
     aws_remote_account_ids: Optional[List[str]] = []
-    vpc_endpoint_service_name: Optional[str] = ""
-    vpc_endpoint_service_ingress_name: Optional[str] = ""
-    cluster_oidc_issuer_url: Optional[str] = ""
+    vpc_endpoint_service_name: Optional[str] = None
+    vpc_endpoint_service_ingress_name: Optional[str] = None
+    cluster_oidc_issuer_url: Optional[str] = None
 
 
 class ClusterAzure(ClusterBase):
@@ -341,6 +347,8 @@ class ClusterAzure(ClusterBase):
 
 
 class ClusterRequestBase(BaseModel):
+    kubedownscaler_downscale_period: Optional[str] = None
+    kubedownscaler_upscale_period: Optional[str] = None
     # teams_webhooks cant be in the ClusterBase model because request format is different from the response format
     teams_webhooks: Optional[TeamsWebhookRequest] = None
 
@@ -369,8 +377,16 @@ class ClusterAwsResponse(ClusterResponseBase, ClusterAws):
     pass
 
 
-class ClusterAzureResponse(ClusterResponseBase, ClusterAzure):
-    pass
+class ClusterAzureResponse(ClusterResponseBase, ClusterBase):
+    provider: Literal[Provider.AZURE]
+    azure_sku_tier: Optional[AzureSkuTier] = None
+    azure_subnet_name: Optional[str] = None
+    azure_vnet_name: Optional[str] = None
+    azure_vnet_resource_group: Optional[str] = None
+    dns_service_ip: Optional[str] = None
+    mi_agentpool_object_id: Optional[str] = None
+    mi_cluster_object_id: Optional[str] = None
+    storage_classes: Optional[StorageClassPayload] = None
 
 
 class ClusterStatusResponse(BaseModel):

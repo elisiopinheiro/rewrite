@@ -35,6 +35,7 @@ from api.shared.models.clusters import (
     ClusterAzureUpdate,
     ClusterFeature,
     ClusterLock,
+    ClusterLockRead,
 )
 from api.shared.models.features import Feature, FeatureBaseEnable
 from api.shared.models.nodes import AdditionalNodePool
@@ -73,7 +74,7 @@ class ClusterRepository:
             Union[ClusterAwsResponse, ClusterAzureResponse]: The created cluster response based on provider
         """
         cluster = Cluster.model_validate(
-            cluster_request,
+            self._normalize_nullable_cluster_fields(cluster_request.model_dump()),
             update={
                 "features": [],
                 "client_namespaces": [],
@@ -132,6 +133,31 @@ class ClusterRepository:
         db_cluster = self.save_cluster(cluster)
 
         return db_cluster.build_response()
+
+    @staticmethod
+    def _normalize_nullable_cluster_fields(data: dict[str, Any]) -> dict[str, Any]:
+        nullable_string_fields = {
+            "account_name",
+            "vpc_endpoint_service_name",
+            "vpc_endpoint_service_ingress_name",
+            "cluster_oidc_issuer_url",
+            "azure_subnet_name",
+            "azure_vnet_name",
+            "azure_vnet_resource_group",
+            "dns_service_ip",
+            "mi_agentpool_object_id",
+            "mi_cluster_object_id",
+        }
+        deprecated_fields = {
+            "kubedownscaler_downscale_period",
+            "kubedownscaler_upscale_period",
+        }
+
+        return {
+            key: None if key in nullable_string_fields and value == "" else value
+            for key, value in data.items()
+            if key not in deprecated_fields
+        }
 
     def get_cluster(self, id: int) -> Cluster:
         """
@@ -206,17 +232,19 @@ class ClusterRepository:
             self._update_storage_classes(cluster, update_data.storage_classes.to_list())
 
         # Remove fields that are being updated directly on their own methods above
-        update_data = update_data.model_dump(
-            exclude={
-                "features",
-                "client_namespaces",
-                "additional_node_pools",
-                "user_features",
-                "teams_webhooks",
-                "client_otlp_endpoints",
-                "storage_classes",
-            },
-            exclude_unset=True,
+        update_data = self._normalize_nullable_cluster_fields(
+            update_data.model_dump(
+                exclude={
+                    "features",
+                    "client_namespaces",
+                    "additional_node_pools",
+                    "user_features",
+                    "teams_webhooks",
+                    "client_otlp_endpoints",
+                    "storage_classes",
+                },
+                exclude_unset=True,
+            )
         )
 
         for key, value in update_data.items():
@@ -587,7 +615,7 @@ class ClusterRepository:
         query = (
             select(Cluster)
             .filter(*condition_filters)
-            .join(ClusterLock, Cluster.name == ClusterLock.cluster_name, isouter=not locked)  # Left outer join
+            .join(ClusterLock, Cluster.id == ClusterLock.cluster_id, isouter=not locked)  # Left outer join
             .order_by(asc(getattr(Cluster, order_by)))
         )
 
@@ -633,7 +661,7 @@ class ClusterRepository:
         query = (
             select(Cluster)
             .filter_by(**filters)
-            .join(ClusterLock, Cluster.name == ClusterLock.cluster_name, isouter=not locked)  # Left outer join
+            .join(ClusterLock, Cluster.id == ClusterLock.cluster_id, isouter=not locked)  # Left outer join
             .order_by(asc(getattr(Cluster, order_by)))
         )
 
@@ -658,23 +686,42 @@ class ClusterRepository:
         result = self.session.execute(query).unique()
         return result.scalars().all()
 
-    def get_cluster_locks(self, **filters: Any) -> List[ClusterLock]:
+    def get_cluster_locks(self, **filters: Any) -> List[ClusterLockRead]:
         """
         Gets clusters locks
 
         Returns:
-            List[ClusterLock]: List of clusters locks
+            List[ClusterLockRead]: List of clusters locks
         """
-        query = self.session.query(ClusterLock).filter_by(**filters)
-        locks = query.all()
-        return locks
+        cluster_name = filters.pop("cluster_name", None)
 
-    def lock_cluster(self, cluster_name: str, owner: str, timeout: int) -> str:
+        query = select(ClusterLock, Cluster.name).join(Cluster, Cluster.id == ClusterLock.cluster_id)
+
+        for key, value in filters.items():
+            query = query.where(getattr(ClusterLock, key) == value)
+        if cluster_name is not None:
+            query = query.where(Cluster.name == cluster_name)
+
+        rows = self.session.execute(query).all()
+        return [
+            ClusterLockRead(
+                cluster_name=name,
+                locked=lock.locked,
+                owner=lock.owner,
+                token=lock.token,
+                timeout_at=lock.timeout_at,
+                created_at=lock.created_at,
+                updated_at=lock.updated_at,
+            )
+            for lock, name in rows
+        ]
+
+    def lock_cluster(self, cluster: Cluster, owner: str, timeout: int) -> str:
         """
         Locks clusters
 
         Args:
-            cluster_name (str): Cluster name
+            cluster (Cluster): Cluster to lock
             owner (str): Lock owner
             timeout (int): Timeout
 
@@ -684,7 +731,11 @@ class ClusterRepository:
         Returns:
             str: Lock token
         """
-        lock: Optional[ClusterLock] = self.session.query(ClusterLock).with_for_update(nowait=True).get(cluster_name)
+        lock: Optional[ClusterLock] = self.session.get(
+            ClusterLock,
+            cluster.id,
+            with_for_update={"nowait": True},
+        )
 
         now = datetime.now(tz=timezone.utc).replace(tzinfo=None)  # Create timestamp in UTC
         timeout_dt = now + timedelta(minutes=timeout)  # Calculate timeout
@@ -692,7 +743,7 @@ class ClusterRepository:
 
         if not lock:  # Lock does not exist
             lock = ClusterLock(
-                cluster_name=cluster_name,
+                cluster_id=cluster.id,
                 created_at=now,
                 updated_at=now,
                 owner=owner,
@@ -700,14 +751,14 @@ class ClusterRepository:
                 token=token,
                 timeout_at=timeout_dt,
             )
-            logger.info(f"Lock for cluster {cluster_name} will be created")
+            logger.info(f"Lock for cluster {cluster.name} will be created")
         else:  # Lock exists
             if lock.locked:  # Check if lock timed out
                 if now < lock.timeout_at:
                     # Lock exists and is not timed out
-                    raise LockException(f"Cluster {cluster_name} is already locked by another operation")
+                    raise LockException(f"Cluster {cluster.name} is already locked by another operation")
 
-                logger.warning(f"Cluster lock for {lock.cluster_name} will be overwritten because it has timed out")
+                logger.warning(f"Cluster lock for {cluster.name} will be overwritten because it has timed out")
 
             lock.owner = owner
             lock.token = token
@@ -719,15 +770,15 @@ class ClusterRepository:
         self.session.commit()
         self.session.refresh(lock)
 
-        logger.info(f"Cluster {cluster_name} was locked")
+        logger.info(f"Cluster {cluster.name} was locked")
         return token
 
-    def unlock_cluster(self, cluster_name: str, token: str) -> bool:
+    def unlock_cluster(self, cluster: Cluster, token: str) -> bool:
         """
         Unlocks clusters
 
         Args:
-            cluster_name (str): Cluster name
+            cluster (Cluster): Cluster to unlock
             token (str): Token
 
         Raises:
@@ -738,18 +789,18 @@ class ClusterRepository:
         Returns:
             bool: True
         """
-        lock: Optional[ClusterLock] = (
-            self.session.query(ClusterLock)
-            .with_for_update(nowait=True)  # Important so it doesn't get stuck
-            .get(cluster_name)
+        lock: Optional[ClusterLock] = self.session.get(
+            ClusterLock,
+            cluster.id,
+            with_for_update={"nowait": True},
         )
 
         if not lock:
-            raise ClusterLockNotFoundException(f"The cluster {cluster_name} does not have a lock")
+            raise ClusterLockNotFoundException(f"The cluster {cluster.name} does not have a lock")
         elif not lock.locked:
-            raise ClusterNotLockedException(f"The cluster {cluster_name} is not locked")
+            raise ClusterNotLockedException(f"The cluster {cluster.name} is not locked")
         elif lock.token != token:
-            raise LockTokenMismatchException(f"The cluster {cluster_name} lock token did not match")
+            raise LockTokenMismatchException(f"The cluster {cluster.name} lock token did not match")
 
         lock.owner = None
         lock.token = None
@@ -759,5 +810,5 @@ class ClusterRepository:
         self.session.add(lock)
         self.session.commit()
         self.session.refresh(lock)
-        logger.info(f"Cluster {cluster_name} was unlocked")
+        logger.info(f"Cluster {cluster.name} was unlocked")
         return True

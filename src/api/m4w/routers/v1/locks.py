@@ -13,7 +13,7 @@ from api.shared.exceptions import (
     LockException,
 )
 from api.shared.logger import logger
-from api.shared.models.clusters import ClusterLockRead, LockResponse, UnlockResponse
+from api.shared.models.clusters import ClusterLock, LockResponse, UnlockResponse
 from api.shared.models.httperror import HTTPError
 from api.shared.repository.cluster_repository import ClusterRepository
 
@@ -62,7 +62,7 @@ def lock_cluster(
     cluster = cluster[0]
     logger.info(f"Requesting lock for cluster {name}")
     try:
-        token = cluster_repository.lock_cluster(cluster, owner, timeout)
+        token = cluster_repository.lock_cluster(name, owner, timeout)
     except LockException as e:
         logger.exception("")
         raise HTTPException(
@@ -126,7 +126,7 @@ def unlock_cluster(
     cluster = cluster[0]
     success = False
     try:
-        success = cluster_repository.unlock_cluster(cluster, token)
+        success = cluster_repository.unlock_cluster(name, token)
     except ClusterNotLockedException as e:
         logger.exception("")
         raise HTTPException(
@@ -157,7 +157,7 @@ def unlock_cluster(
 
 @router.get(
     "/v1/locks",
-    response_model=List[ClusterLockRead],
+    response_model=List[ClusterLock],
     responses={404: {"model": HTTPError}},
     tags=["Locks v1"],
 )
@@ -168,7 +168,7 @@ def get_clusters_locks(
     token: Union[str, None] = None,
     username: str = Depends(validate_credentials),
     cluster_repository: ClusterRepository = Depends(ClusterRepository),
-) -> List[ClusterLockRead]:
+) -> List[ClusterLock]:
     """
     \f Method to get cluster locks
 

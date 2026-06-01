@@ -6,6 +6,7 @@ from pydantic import (
     PlainSerializer,
     ValidationInfo,
     field_validator,
+    model_validator,
 )
 from sqlmodel import JSON, Column, Field, ForeignKey, Integer, Relationship, SQLModel
 from sqlmodel.sql.sqltypes import AutoString
@@ -42,6 +43,13 @@ class OTLPAuth(SQLModel):
     type: OTLPAuthType
     secret_name: str
     secret_namespace: str
+    header_key: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_header_key(self):
+        if self.type == OTLPAuthType.HEADER and not self.header_key:
+            raise ValueError("'header_key' is required when auth type is 'header'")
+        return self
 
     model_config = ConfigDict(use_enum_values=True)
 

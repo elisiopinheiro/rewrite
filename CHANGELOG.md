@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.0](https://atc-github.azure.cloud.bmw/4WHEELS-M/clusters-4wm/compare/1.4.0...1.5.0) (2026-05-27)
+
+
+### Features
+
+* required 'header_key' field when auth type is 'header' [FOURWHEELS-889] ([#189](https://atc-github.azure.cloud.bmw/4WHEELS-M/clusters-4wm/issues/189)) ([bfdcf21](https://atc-github.azure.cloud.bmw/4WHEELS-M/clusters-4wm/commit/bfdcf21ea3f334dd8f4a893f413d39703d1fd774))
+
+## [1.4.0](https://atc-github.azure.cloud.bmw/4WHEELS-M/clusters-4wm/compare/1.3.0...1.4.0) (2026-05-25)
+
+
+### Features
+
+* re-use cluster features [FOURWHEELS-508] ([#187](https://atc-github.azure.cloud.bmw/4WHEELS-M/clusters-4wm/issues/187)) ([dafdbe1](https://atc-github.azure.cloud.bmw/4WHEELS-M/clusters-4wm/commit/dafdbe1e9b3a5ea5dd02d33853fe267d73d4b7d8))
+
 ## [1.3.0](https://atc-github.azure.cloud.bmw/4WHEELS-M/clusters-4wm/compare/1.2.1...1.3.0) (2026-05-14)
 
 

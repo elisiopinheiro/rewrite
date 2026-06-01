@@ -56,6 +56,14 @@ INVALID_OTLP_ENDPOINTS = [
         "signals": ["traces"],
         "auth": {"secret_name": "s", "secret_namespace": "ns"},
     },
+    # Auth type header missing header_key
+    {
+        "name": "bad-ep",
+        "type": "otlp",
+        "endpoint": "https://example.com/v1/traces",
+        "signals": ["traces"],
+        "auth": {"type": "header", "secret_name": "s", "secret_namespace": "ns"},
+    },
     # Missing required field: name
     {"type": "otlp", "endpoint": "https://example.com/v1/traces", "signals": ["traces"]},
     # Missing required field: type
@@ -78,7 +86,7 @@ INVALID_OTLP_ENDPOINTS = [
         "type": "grafanacloud",
         "endpoint": "https://example.com/v1/traces",
         "signals": ["traces"],
-        "auth": {"type": "header", "secret_name": "s", "secret_namespace": "ns"},
+        "auth": {"type": "header", "secret_name": "s", "secret_namespace": "ns", "header_key": "X-API-Key"},
     },
     # Grafana Cloud with non-HTTPS endpoint URL
     {
@@ -253,13 +261,15 @@ class TestClientOTLPEndpoints:
         )
         def test_add_cluster_with_each_auth_type(self, auth_client, auth_type):
             """Test that each auth type is accepted."""
-            otlp_endpoint = make_otlp_endpoint_payload(
-                auth={
-                    "type": auth_type.value,
-                    "secret_name": "my-secret",
-                    "secret_namespace": "observability",
-                }
-            )
+            auth_payload = {
+                "type": auth_type.value,
+                "secret_name": "my-secret",
+                "secret_namespace": "observability",
+            }
+            if auth_type == OTLPAuthType.HEADER:
+                auth_payload["header_key"] = "X-API-Key"
+
+            otlp_endpoint = make_otlp_endpoint_payload(auth=auth_payload)
             cluster_data = make_add_cluster_payload(provider=Provider.AWS, client_otlp_endpoints=[otlp_endpoint])
 
             response = auth_client.post("/v1/clusters", json=cluster_data)

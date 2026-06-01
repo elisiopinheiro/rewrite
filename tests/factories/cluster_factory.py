@@ -133,6 +133,8 @@ def make_add_cluster_payload(provider: Provider, **overrides) -> Dict:
         "cmdb_app_id": "",
         "cmdb_appd_id": "",
         "status": "running",
+        "kubedownscaler_downscale_period": "Mon-Fri 19:00-19:15 Europe/Lisbon",
+        "kubedownscaler_upscale_period": "Mon-Fri 07:00-07:15 Europe/Lisbon",
         "uptime_period": None,
         "gateway_api_enabled": False,
         "headlamp_enabled": True,
@@ -152,9 +154,9 @@ def make_add_cluster_payload(provider: Provider, **overrides) -> Dict:
             # Optional fields
             "aws_vpc_endpoint_remote_account_ids": [],
             "aws_remote_account_ids": [],
-            "vpc_endpoint_service_name": None,
-            "vpc_endpoint_service_ingress_name": None,
-            "cluster_oidc_issuer_url": None,
+            "vpc_endpoint_service_name": "",
+            "vpc_endpoint_service_ingress_name": "",
+            "cluster_oidc_issuer_url": "",
         })
     elif provider == Provider.AZURE:
         base_data.update({
@@ -220,6 +222,8 @@ def make_cluster_update_payload(provider: Provider, **overrides) -> Dict:
         "logging_retention_period": "168h",
         "tracing_retention_period": "168h",
         "additional_node_pools": [],
+        "kubedownscaler_downscale_period": "Mon-Fri 19:00-19:15 Europe/Lisbon",
+        "kubedownscaler_upscale_period": "Mon-Fri 07:00-07:15 Europe/Lisbon",
         "uptime_period": None,
         "multi_tenant": fake.boolean(),
         "gateway_api_enabled": fake.boolean(),
@@ -234,8 +238,8 @@ def make_cluster_update_payload(provider: Provider, **overrides) -> Dict:
             "aws_vpc_endpoint_remote_account_ids": [],
             "aws_remote_account_ids": [],
             "vpc_endpoint_service_name": f"com.amazonaws.vpce.{fake.uuid4()}",
-            "vpc_endpoint_service_ingress_name": None,
-            "cluster_oidc_issuer_url": None,
+            "vpc_endpoint_service_ingress_name": "",
+            "cluster_oidc_issuer_url": "",
         })
     elif provider == Provider.AZURE:
         base_data.update({
@@ -289,6 +293,8 @@ def make_cluster_backfill_payload(**overrides) -> Dict:
         "logging_retention_period": "168h",
         "tracing_retention_period": "168h",
         "additional_node_pools": [],
+        "kubedownscaler_downscale_period": "Mon-Fri 19:00-19:15 Europe/Lisbon",
+        "kubedownscaler_upscale_period": "Mon-Fri 07:00-07:15 Europe/Lisbon",
         "uptime_period": None,
         "multi_tenant": fake.boolean(),
         "gateway_api_enabled": fake.boolean(),
@@ -315,9 +321,9 @@ def make_cluster_backfill_payload(**overrides) -> Dict:
         "azure_vnet_resource_group": "test-rg",
         "aws_vpc_endpoint_remote_account_ids": [],
         "aws_remote_account_ids": [],
-        "vpc_endpoint_service_name": None,
-        "vpc_endpoint_service_ingress_name": None,
-        "cluster_oidc_issuer_url": None,
+        "vpc_endpoint_service_name": "",
+        "vpc_endpoint_service_ingress_name": "",
+        "cluster_oidc_issuer_url": "",
         "azure_sku_tier": "Free",
         "mi_agentpool_object_id": f"{fake.uuid4()}",
         "mi_cluster_object_id": f"{fake.uuid4()}",

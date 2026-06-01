@@ -33,6 +33,7 @@ class ClientOTLPEndpointFactory(SQLAlchemyModelFactory):
             "type": OTLPAuthType.HEADER.value,
             "secret_name": f"otlp-secret-{fake.word()}",
             "secret_namespace": "observability",
+            "header_key": "X-API-Key",
         }
     )
     config = None
@@ -76,6 +77,7 @@ def make_otlp_endpoint_payload(
             "type": OTLPAuthType.HEADER.value,
             "secret_name": f"otlp-secret-{fake.word()}",
             "secret_namespace": "observability",
+            "header_key": "X-API-Key",
         }
     # For Grafana Cloud with no explicit auth arg, don't include auth key
 

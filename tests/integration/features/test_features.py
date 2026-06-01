@@ -31,6 +31,73 @@ class TestOptionalFeatures:
         assert res.status_code == 200
         assert res.json()["name"] == fake_feature.name
 
+    def test_add_duplicate_feature_returns_existing(self, auth_client):
+        """Test that POST /v1/features with identical data returns existing feature, not a duplicate."""
+        feature_data = make_add_feature_payload(
+            name="dedup-feature",
+            type="optional",
+            dependencies=["dep-a", "dep-b"],
+            constraints=[],
+            namespaced=False,
+        )
+
+        res1 = auth_client.post("/v1/features", json=feature_data.model_dump())
+        assert res1.status_code == 200
+        feature1 = res1.json()
+
+        res2 = auth_client.post("/v1/features", json=feature_data.model_dump())
+        assert res2.status_code == 200
+        feature2 = res2.json()
+
+        assert feature1["id"] == feature2["id"]
+        assert feature1["name"] == feature2["name"]
+
+    def test_add_feature_different_deps_creates_new(self, auth_client):
+        """Test that features with same name but different dependencies are distinct."""
+        base = {
+            "name": "shared-name",
+            "type": "optional",
+            "constraints": [],
+            "namespaced": False,
+        }
+
+        res1 = auth_client.post("/v1/features", json={**base, "dependencies": ["dep-a"]})
+        assert res1.status_code == 200
+
+        res2 = auth_client.post("/v1/features", json={**base, "dependencies": ["dep-b"]})
+        assert res2.status_code == 200
+
+        assert res1.json()["id"] != res2.json()["id"]
+
+    def test_add_feature_different_constraints_creates_new(self, auth_client):
+        """Test that features with same name but different constraints are distinct."""
+        base = {
+            "name": "shared-name",
+            "type": "optional",
+            "dependencies": [],
+            "namespaced": False,
+        }
+
+        res1 = auth_client.post(
+            "/v1/features",
+            json={
+                **base,
+                "constraints": [{"key": "env", "operator": "equals", "value": "prod"}],
+            },
+        )
+        assert res1.status_code == 200
+
+        res2 = auth_client.post(
+            "/v1/features",
+            json={
+                **base,
+                "constraints": [{"key": "env", "operator": "equals", "value": "dev"}],
+            },
+        )
+        assert res2.status_code == 200
+
+        assert res1.json()["id"] != res2.json()["id"]
+
     def test_delete_feature(self, auth_client):
         """Test that DELETE /v1/features/{id} deletes a feature."""
         feature = FeatureFactory.create()

@@ -11,6 +11,7 @@ from api.shared.models.releases import (
     ReleaseFeature,
     ReleaseRequest,
     ReleaseResponse,
+    ReleaseUpdateRequest,
 )
 from api.shared.repository.feature_repository import FeatureRepository
 
@@ -36,8 +37,9 @@ class ReleaseRepository:
                 db_features = self.feature_repository.get_features(
                     name=release_feature.name,
                     type=release_feature.type,
-                    namespaced=release_feature.namespaced,
+                    dependencies=release_feature.dependencies,
                     constraints=release_feature.constraints,
+                    namespaced=release_feature.namespaced,
                 )
                 feature = next(
                     (db_feature for db_feature in db_features if db_feature == release_feature),
@@ -47,6 +49,7 @@ class ReleaseRepository:
                 release.features.append(ReleaseFeature(release=release, feature=feature))
 
         db_release = self.save_release(release)
+
         return ReleaseResponse.parse_release(db_release)
 
     def save_release(self, release: Release) -> Release:
@@ -58,6 +61,7 @@ class ReleaseRepository:
     def get_releases(self, order_by="id", **filters: Any) -> list[Release]:
         statement = select(Release).filter_by(**filters).order_by(asc(getattr(Release, order_by)))
         releases = self.session.execute(statement).unique().scalars().all()
+
         return releases
 
     def get_release(self, id: int) -> Release:
@@ -66,4 +70,22 @@ class ReleaseRepository:
     def delete_release(self, release: Release) -> dict:
         self.session.delete(release)
         self.session.commit()
+
         return {"msg": f"Release {release.name} deleted successfully"}
+
+    def update_release(self, release: Release, update_request: ReleaseUpdateRequest) -> ReleaseResponse:
+        if update_request.reserved_namespaces is not None:
+            release.reserved_namespaces = update_request.reserved_namespaces
+
+        if update_request.features is not None:
+            new_release_features = []
+            for feature_data in update_request.features:
+                feature = self.feature_repository.save_feature(Feature.model_validate(feature_data.model_dump()))
+                new_release_features.append(ReleaseFeature(release=release, feature=feature))
+            release.features = new_release_features
+
+        self.session.add(release)
+        self.session.commit()
+        self.session.refresh(release)
+
+        return ReleaseResponse.parse_release(release)

@@ -8,7 +8,6 @@ from factories.cluster_factory import (
     TeamsWebhookFactory,
 )
 from factories.storage_class_factory import RemoteStorageClassFactory, UltraSSDStorageClassFactory
-from sqlalchemy.orm import object_session
 
 from api.shared.models.clusters import ClusterLock, Provider
 
@@ -17,26 +16,6 @@ from api.shared.models.clusters import ClusterLock, Provider
 @pytest.mark.clusters4wm_app
 class TestGetClustersV2:
     """Integration tests for GET /v2/clusters endpoint."""
-
-    @staticmethod
-    def _attach_lock(cluster, *, locked, token, owner, timeout_at, created_at, updated_at):
-        cluster.cluster_lock = ClusterLock(
-            cluster_id=cluster.id,
-            locked=locked,
-            token=token,
-            owner=owner,
-            timeout_at=timeout_at,
-            created_at=created_at,
-            updated_at=updated_at,
-        )
-        cluster.cluster_lock.cluster = cluster
-
-        session = object_session(cluster)
-        session.add(cluster.cluster_lock)
-        session.commit()
-        session.refresh(cluster)
-        session.refresh(cluster.cluster_lock)
-        return cluster
 
     def test_get_clusters_v2(self, auth_client):
         """Test that GET /v2/clusters returns clusters in v2 format."""
@@ -62,14 +41,15 @@ class TestGetClustersV2:
             """
 
             # Create a cluster and assign a ClusterLock
-            cluster = TestGetClustersV2._attach_lock(
-                AzureClusterFactory(),
-                locked=lock_value,
-                token="fake-token",
-                owner="test-owner",
-                timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
-                created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
-                updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+            cluster = AzureClusterFactory(
+                cluster_lock=ClusterLock(
+                    locked=lock_value,
+                    token="fake-token",
+                    owner="test-owner",
+                    timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
+                    created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+                    updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+                )
             )
 
             # Call the API
@@ -88,14 +68,15 @@ class TestGetClustersV2:
             """
 
             # Create a cluster with an expired lock (timeout in the past)
-            cluster = TestGetClustersV2._attach_lock(
-                AzureClusterFactory(),
-                locked=True,
-                token="fake-token",
-                owner="test-owner",
-                timeout_at=(datetime.now(tz=timezone.utc) - timedelta(hours=1)).replace(tzinfo=None),
-                created_at=(datetime.now(tz=timezone.utc) - timedelta(hours=2)).replace(tzinfo=None),
-                updated_at=(datetime.now(tz=timezone.utc) - timedelta(hours=1)).replace(tzinfo=None),
+            cluster = AzureClusterFactory(
+                cluster_lock=ClusterLock(
+                    locked=True,
+                    token="fake-token",
+                    owner="test-owner",
+                    timeout_at=(datetime.now(tz=timezone.utc) - timedelta(hours=1)).replace(tzinfo=None),
+                    created_at=(datetime.now(tz=timezone.utc) - timedelta(hours=2)).replace(tzinfo=None),
+                    updated_at=(datetime.now(tz=timezone.utc) - timedelta(hours=1)).replace(tzinfo=None),
+                )
             )
 
             # Call the API
@@ -321,14 +302,15 @@ class TestGetClustersV2:
     def test_get_clusters_v2_filter_by_locked(self, auth_client):
         """Test that GET /v2/clusters filters by locked status."""
         # Create a locked cluster
-        self._attach_lock(
-            AzureClusterFactory(),
-            locked=True,
-            token="fake-token",
-            owner="test-owner",
-            timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
-            created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
-            updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+        AzureClusterFactory(
+            cluster_lock=ClusterLock(
+                locked=True,
+                token="fake-token",
+                owner="test-owner",
+                timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
+                created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+                updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+            )
         )
         # Create an unlocked cluster
         AWSClusterFactory()
@@ -342,14 +324,15 @@ class TestGetClustersV2:
     def test_get_clusters_v2_filter_by_unlocked(self, auth_client):
         """Test that GET /v2/clusters filters by unlocked status."""
         # Create a locked cluster
-        self._attach_lock(
-            AzureClusterFactory(),
-            locked=True,
-            token="fake-token",
-            owner="test-owner",
-            timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
-            created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
-            updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+        AzureClusterFactory(
+            cluster_lock=ClusterLock(
+                locked=True,
+                token="fake-token",
+                owner="test-owner",
+                timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
+                created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+                updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+            )
         )
         # Create an unlocked cluster
         AWSClusterFactory()

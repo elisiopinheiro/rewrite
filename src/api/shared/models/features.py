@@ -81,11 +81,16 @@ SerializedConstraint = Annotated[
 class FeatureBase(SQLModel):
     name: Annotated[str, AfterValidator(lambda v: v.lower().strip())]
     type: Optional[str] = FeatureType.OPTIONAL
-    dependencies: Optional[List[LowercasedStr]] = Field(default=None, sa_column=Column(JSON))
-    constraints: Optional[List[SerializedConstraint]] = Field(default=None, sa_column=Column(JSON, server_default="[]"))
-    namespaced: Optional[bool] = Field(
-        default=None, sa_column=Column(Boolean, nullable=False, server_default=text("false"))
+    dependencies: Optional[List[LowercasedStr]] = Field(
+        default=[], sa_column=Column(JSON, nullable=False, server_default="[]")
     )
+    constraints: Optional[List[SerializedConstraint]] = Field(
+        default=[], sa_column=Column(JSON, nullable=False, server_default="[]")
+    )
+    namespaced: Optional[bool] = Field(
+        default=False, sa_column=Column(Boolean, nullable=False, server_default=text("false"))
+    )
+
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
     def dependencies_match(self, other) -> bool:

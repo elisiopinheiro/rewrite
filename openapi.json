@@ -2994,6 +2994,71 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "Releases v1"
+        ],
+        "summary": "Update Release",
+        "operationId": "update_release_v1_releases__id__patch",
+        "security": [
+          {
+            "HTTPBasic": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v2/releases": {
@@ -7354,7 +7419,8 @@
                 "type": "null"
               }
             ],
-            "title": "Dependencies"
+            "title": "Dependencies",
+            "default": []
           },
           "constraints": {
             "anyOf": [
@@ -7368,7 +7434,8 @@
                 "type": "null"
               }
             ],
-            "title": "Constraints"
+            "title": "Constraints",
+            "default": []
           },
           "namespaced": {
             "anyOf": [
@@ -7379,7 +7446,8 @@
                 "type": "null"
               }
             ],
-            "title": "Namespaced"
+            "title": "Namespaced",
+            "default": false
           },
           "id": {
             "anyOf": [
@@ -7429,7 +7497,8 @@
                 "type": "null"
               }
             ],
-            "title": "Dependencies"
+            "title": "Dependencies",
+            "default": []
           },
           "constraints": {
             "anyOf": [
@@ -7443,7 +7512,8 @@
                 "type": "null"
               }
             ],
-            "title": "Constraints"
+            "title": "Constraints",
+            "default": []
           },
           "namespaced": {
             "anyOf": [
@@ -7454,7 +7524,8 @@
                 "type": "null"
               }
             ],
-            "title": "Namespaced"
+            "title": "Namespaced",
+            "default": false
           }
         },
         "type": "object",
@@ -7493,7 +7564,8 @@
                 "type": "null"
               }
             ],
-            "title": "Dependencies"
+            "title": "Dependencies",
+            "default": []
           },
           "constraints": {
             "anyOf": [
@@ -7507,7 +7579,8 @@
                 "type": "null"
               }
             ],
-            "title": "Constraints"
+            "title": "Constraints",
+            "default": []
           },
           "namespaced": {
             "anyOf": [
@@ -7518,7 +7591,8 @@
                 "type": "null"
               }
             ],
-            "title": "Namespaced"
+            "title": "Namespaced",
+            "default": false
           }
         },
         "type": "object",
@@ -7557,7 +7631,8 @@
                 "type": "null"
               }
             ],
-            "title": "Dependencies"
+            "title": "Dependencies",
+            "default": []
           },
           "constraints": {
             "anyOf": [
@@ -7571,7 +7646,8 @@
                 "type": "null"
               }
             ],
-            "title": "Constraints"
+            "title": "Constraints",
+            "default": []
           },
           "namespaced": {
             "anyOf": [
@@ -7582,7 +7658,8 @@
                 "type": "null"
               }
             ],
-            "title": "Namespaced"
+            "title": "Namespaced",
+            "default": false
           },
           "enabled": {
             "anyOf": [
@@ -7645,7 +7722,8 @@
                 "type": "null"
               }
             ],
-            "title": "Dependencies"
+            "title": "Dependencies",
+            "default": []
           },
           "constraints": {
             "anyOf": [
@@ -7659,7 +7737,8 @@
                 "type": "null"
               }
             ],
-            "title": "Constraints"
+            "title": "Constraints",
+            "default": []
           },
           "namespaced": {
             "anyOf": [
@@ -7670,7 +7749,8 @@
                 "type": "null"
               }
             ],
-            "title": "Namespaced"
+            "title": "Namespaced",
+            "default": false
           },
           "enabled": {
             "anyOf": [
@@ -7761,6 +7841,17 @@
           "secret_namespace": {
             "type": "string",
             "title": "Secret Namespace"
+          },
+          "header_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Header Key"
           }
         },
         "type": "object",
@@ -8061,6 +8152,40 @@
           "provider"
         ],
         "title": "ReleaseResponse"
+      },
+      "ReleaseUpdateRequest": {
+        "properties": {
+          "features": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FeatureBase-Input"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Features"
+          },
+          "reserved_namespaces": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reserved Namespaces"
+          }
+        },
+        "type": "object",
+        "title": "ReleaseUpdateRequest"
       },
       "StorageClassPayload-Input": {
         "properties": {

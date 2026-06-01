@@ -7,8 +7,8 @@ class SCPClusterResponse(BaseModel):
     name: str
     subscription: str
     provider_region: str
-    azure_vnet_name: Optional[str] = None
-    azure_vnet_resource_group: Optional[str] = None
+    azure_vnet_name: str
+    azure_vnet_resource_group: str
     network_cidr: str
     cmdb_app_id: Optional[str] = None
     cmdb_appd_id: Optional[str] = None

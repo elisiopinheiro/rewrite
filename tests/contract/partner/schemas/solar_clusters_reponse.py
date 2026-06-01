@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class SOLARClusterResponse(BaseModel):
     name: str
     subscription: str
-    account_name: Optional[str] = None
+    account_name: str
     provider: str
     multi_tenant: bool
     provider_region: str

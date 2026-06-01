@@ -1,9 +1,6 @@
 from typing import TYPE_CHECKING, List, Literal, Optional
 
-from pydantic import (
-    ConfigDict,
-    field_validator,
-)
+from pydantic import BaseModel, ConfigDict, field_validator
 from sqlalchemy import String as SAString
 from sqlmodel import (
     JSON,
@@ -69,6 +66,11 @@ class Release(ReleaseBase, table=True):
 
 class ReleaseRequest(ReleaseBase):
     features: Optional[List[FeatureBase]] = None
+
+
+class ReleaseUpdateRequest(BaseModel):
+    features: Optional[List[FeatureBase]] = None
+    reserved_namespaces: Optional[List[str]] = None
 
 
 class ReleaseResponse(ReleaseBase):

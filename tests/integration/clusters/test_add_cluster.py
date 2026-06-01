@@ -144,7 +144,29 @@ class TestAddCluster:
                     namespaced=True,
                 ).model_dump(),
             ]
-            cluster_data = make_add_cluster_payload(provider=Provider.AWS, features=fake_features)
+            release_data = {
+                "name": "release-for-cluster-features",
+                "provider": Provider.AWS.value,
+                "reserved_namespaces": [],
+                "features": [
+                    {
+                        "name": feature["name"],
+                        "type": feature["type"],
+                        "dependencies": feature.get("dependencies", []),
+                        "constraints": feature.get("constraints", []),
+                        "namespaced": feature.get("namespaced", False),
+                    }
+                    for feature in fake_features
+                ],
+            }
+            release_response = auth_client.post("/v1/releases", json=release_data)
+            assert release_response.status_code == 200
+
+            cluster_data = make_add_cluster_payload(
+                provider=Provider.AWS,
+                release=release_data["name"],
+                features=fake_features,
+            )
             response = auth_client.post("/v1/clusters", json=cluster_data)
             assert response.status_code == 200
 

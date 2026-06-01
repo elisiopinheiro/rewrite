@@ -2,29 +2,8 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 from factories.cluster_factory import AWSClusterFactory, AzureClusterFactory
-from sqlalchemy.orm import object_session
 
 from api.shared.models.clusters import ClusterLock
-
-
-def attach_lock(cluster, *, locked, token, owner, timeout_at, created_at, updated_at):
-    cluster.cluster_lock = ClusterLock(
-        cluster_id=cluster.id,
-        locked=locked,
-        token=token,
-        owner=owner,
-        timeout_at=timeout_at,
-        created_at=created_at,
-        updated_at=updated_at,
-    )
-    cluster.cluster_lock.cluster = cluster
-
-    session = object_session(cluster)
-    session.add(cluster.cluster_lock)
-    session.commit()
-    session.refresh(cluster)
-    session.refresh(cluster.cluster_lock)
-    return cluster
 
 
 @pytest.mark.integration
@@ -47,14 +26,15 @@ class TestLockCluster:
 
     def test_lock_already_locked_cluster(self, auth_client):
         """Test that locking an already-locked cluster returns 423."""
-        cluster = attach_lock(
-            AzureClusterFactory(),
-            locked=True,
-            token="existing-token",
-            owner="other-owner",
-            timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
-            created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
-            updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+        cluster = AzureClusterFactory(
+            cluster_lock=ClusterLock(
+                locked=True,
+                token="existing-token",
+                owner="other-owner",
+                timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
+                created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+                updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+            )
         )
 
         response = auth_client.put(
@@ -121,14 +101,15 @@ class TestUnlockCluster:
 
     def test_unlock_invalid_token(self, auth_client):
         """Test that unlocking with an invalid token returns 400."""
-        cluster = attach_lock(
-            AzureClusterFactory(),
-            locked=True,
-            token="correct-token",
-            owner="test-owner",
-            timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
-            created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
-            updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+        cluster = AzureClusterFactory(
+            cluster_lock=ClusterLock(
+                locked=True,
+                token="correct-token",
+                owner="test-owner",
+                timeout_at=(datetime.now(tz=timezone.utc) + timedelta(hours=1)).replace(tzinfo=None),
+                created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+                updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+            )
         )
 
         response = auth_client.put(
@@ -140,14 +121,15 @@ class TestUnlockCluster:
 
     def test_unlock_cluster_not_locked(self, auth_client):
         """Test that unlocking a cluster that is not locked returns 409."""
-        cluster = attach_lock(
-            AzureClusterFactory(),
-            locked=False,
-            token=None,
-            owner=None,
-            timeout_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
-            created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
-            updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+        cluster = AzureClusterFactory(
+            cluster_lock=ClusterLock(
+                locked=False,
+                token=None,
+                owner=None,
+                timeout_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+                created_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+                updated_at=(datetime.now(tz=timezone.utc)).replace(tzinfo=None),
+            )
         )
 
         response = auth_client.put(

@@ -1,8 +1,10 @@
 import pytest
 from factories.release_factory import make_add_release_payload, make_release_with_features_payload
+from sqlmodel import select
 from utils import popper
 
 from api.shared.models.clusters import Provider
+from api.shared.models.features import Feature
 
 
 @pytest.mark.integration
@@ -64,6 +66,34 @@ class TestAddRelease:
             response_data = response.json()
             assert "features" in response_data
             assert response_data["features"] == []
+
+        def test_add_two_releases_reuses_same_feature(self, auth_client, db_session):
+            """Test that two releases with identical features reuse the same DB feature record."""
+            features = [
+                {
+                    "name": "shared-core-feature",
+                    "type": "core",
+                    "dependencies": ["dep-one"],
+                },
+                {
+                    "name": "shared-optional-feature",
+                    "type": "optional",
+                },
+            ]
+
+            release1 = make_add_release_payload(provider=Provider.AWS, features=features)
+            release2 = make_add_release_payload(provider=Provider.AWS, features=features)
+            statement = select(Feature).where(Feature.name.in_({feature["name"] for feature in features}))
+
+            res1 = auth_client.post("/v1/releases", json=release1)
+            assert res1.status_code == 200
+            matching = db_session.execute(statement).scalars().all()
+            assert len(matching) == 2
+
+            res2 = auth_client.post("/v1/releases", json=release2)
+            assert res2.status_code == 200
+            matching = db_session.execute(statement).scalars().all()
+            assert len(matching) == 2
 
     @pytest.mark.reserved_namespaces
     class TestReservedNamespaces:

@@ -18,7 +18,7 @@ class BaseClusterResponseContractV1(BaseModel):
     id: int
     name: str
     subscription: str
-    account_name: Optional[str] = None
+    account_name: str
     provider: ProviderType
     release: str
     environment: str
@@ -45,6 +45,8 @@ class BaseClusterResponseContractV1(BaseModel):
     cmdb_app_id: Optional[str] = None
     cmdb_appd_id: Optional[str] = None
     status: Optional[str] = None
+    kubedownscaler_downscale_period: Optional[str] = None
+    kubedownscaler_upscale_period: Optional[str] = None
     uptime_period: Optional[str] = None
     gateway_api_enabled: Optional[bool] = None
     headlamp_enabled: Optional[bool] = None
@@ -88,12 +90,12 @@ class AzureClusterResponseContractV1(BaseClusterResponseContractV1):
 
     # Required Azure fields
     azure_sku_tier: str
-    azure_subnet_name: Optional[str] = None
-    azure_vnet_name: Optional[str] = None
-    azure_vnet_resource_group: Optional[str] = None
-    dns_service_ip: Optional[str] = None
-    mi_agentpool_object_id: Optional[str] = None
-    mi_cluster_object_id: Optional[str] = None
+    azure_subnet_name: str
+    azure_vnet_name: str
+    azure_vnet_resource_group: str
+    dns_service_ip: str
+    mi_agentpool_object_id: str
+    mi_cluster_object_id: str
 
     # Optional Azure fields
     storage_classes: Optional[StorageClassContract] = None

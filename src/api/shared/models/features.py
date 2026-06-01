@@ -6,6 +6,7 @@ from pydantic import (
     AfterValidator,
     ConfigDict,
     PlainSerializer,
+    field_validator,
     model_validator,
 )
 from sqlalchemy import Boolean
@@ -84,9 +85,22 @@ class FeatureBase(SQLModel):
     dependencies: Optional[List[LowercasedStr]] = Field(default=None, sa_column=Column(JSON))
     constraints: Optional[List[SerializedConstraint]] = Field(default=None, sa_column=Column(JSON, server_default="[]"))
     namespaced: Optional[bool] = Field(
-        default=None, sa_column=Column(Boolean, nullable=False, server_default=text("false"))
+        default=False, sa_column=Column(Boolean, nullable=False, server_default=text("false"))
     )
     model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
+
+    # v3 schema fixes made feature.type and feature.namespaced NOT NULL on the shared
+    # database. Coerce an explicit JSON null to the default so this legacy service
+    # never inserts SQL NULL (which would otherwise raise an IntegrityError).
+    @field_validator("type", mode="before")
+    @classmethod
+    def _default_type(cls, value):
+        return FeatureType.OPTIONAL if value is None else value
+
+    @field_validator("namespaced", mode="before")
+    @classmethod
+    def _default_namespaced(cls, value):
+        return False if value is None else value
 
     def dependencies_match(self, other) -> bool:
         if (not self.dependencies) and (not other.dependencies):

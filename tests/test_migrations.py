@@ -16,7 +16,7 @@ from app.models.base import Base
 # The revision the production database is already stamped at via the legacy
 # service. The rewrite baseline MUST match it so `alembic upgrade head` is a
 # no-op on prod and the rewrite deploys without running a migration.
-PROD_HEAD = "a1b2c3d4e5f6"
+PROD_HEAD = "73aee50345b2"
 
 
 def _alembic_config(url: str | None = None) -> Config:

@@ -21,8 +21,8 @@ class Feature(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     type: Mapped[str] = mapped_column(default="optional")
-    dependencies: Mapped[list[str] | None] = mapped_column(JSON)
-    constraints: Mapped[list[dict[str, Any]] | None] = mapped_column(JSON, default=list, server_default=text("'[]'"))
+    dependencies: Mapped[list[str]] = mapped_column(JSON, default=list, server_default=text("'[]'"))
+    constraints: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list, server_default=text("'[]'"))
     namespaced: Mapped[bool] = mapped_column(default=False, server_default=text("false"))
 
     cluster_features: Mapped[list[ClusterFeature]] = relationship(back_populates="feature")

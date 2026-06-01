@@ -2,7 +2,7 @@
 
 Canonical metadata service for managed clusters. It runs alongside the legacy
 `clusters-4wm` service against the **same** database during the migration window
-(see `REWRITE_REVIEW.md`).
+(see [`docs/migration-guide.html`](docs/migration-guide.html)).
 
 ## Apps
 

@@ -1,11 +1,11 @@
 """Squashed baseline for the Clusters Metadata API.
 
-Revision ID: a1b2c3d4e5f6
+Revision ID: 73aee50345b2
 Revises:
 Create Date: 2026-05-19 10:00:00.000000
 
 This single revision collapses the entire legacy Alembic chain
-(``305ae638786e`` .. ``a1b2c3d4e5f6``) into one frozen baseline. Its revision id
+(``305ae638786e`` .. ``73aee50345b2``) into one frozen baseline. Its revision id
 is deliberately the head the production database is already stamped at, so
 ``alembic upgrade head`` is a **no-op** on every already-migrated environment and
 the rewrite deploys without running a migration against the shared database.
@@ -24,7 +24,7 @@ from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "a1b2c3d4e5f6"
+revision = "73aee50345b2"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -109,8 +109,8 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("type", sa.String(), nullable=False),
-        sa.Column("dependencies", sa.JSON(), nullable=True),
-        sa.Column("constraints", sa.JSON(), server_default=sa.text("'[]'"), nullable=True),
+        sa.Column("dependencies", sa.JSON(), server_default=sa.text("'[]'"), nullable=False),
+        sa.Column("constraints", sa.JSON(), server_default=sa.text("'[]'"), nullable=False),
         sa.Column("namespaced", sa.Boolean(), server_default=sa.text("false"), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name", name="feature_name_uc"),

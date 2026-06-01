@@ -171,7 +171,7 @@ Prefer:
 
 This repo-specific rule matters:
 
-- `REWRITE_REVIEW.md` documents a shared-schema coexistence period with the legacy service
+- `docs/migration-guide.html` documents a shared-schema coexistence period with the legacy service
 - any migration or schema assumption must remain backward compatible during that window
 
 ### Tests And Toolchain

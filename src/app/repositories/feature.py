@@ -51,6 +51,8 @@ class FeatureRepository:
     @staticmethod
     def _normalize_persisted_data(data: Mapping[str, Any]) -> dict[str, Any]:
         normalized_data = dict(data)
+        if normalized_data.get("dependencies") is None:
+            normalized_data["dependencies"] = []
         if normalized_data.get("constraints") is None:
             normalized_data["constraints"] = []
         if normalized_data.get("namespaced") is None:

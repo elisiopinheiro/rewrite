@@ -1,0 +1,10 @@
+name: Delete temporary image in the ecr private or public in shared-services-int
+on:
+  delete:
+
+jobs:
+  delete-image-in-AWS-ecr-private-or-public-shared-services-int:
+    uses: 4WHEELS-M/workflows/.github/workflows/delete-images-ecr.yaml@0.20.0
+    with:
+      AWS_ECR_REPO_TYPE: "private"
+      AWS_ECR_REPOSITORY: "clusters-4wm"

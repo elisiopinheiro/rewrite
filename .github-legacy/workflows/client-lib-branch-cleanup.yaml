@@ -1,0 +1,34 @@
+name: Client Lib Branch Cleanup
+on:
+  delete:
+
+# Setting an environment variable with the value of a configuration variable
+env:
+  GITHUB_APP_ID: ${{vars.TARGET_CLIENT_APP_ID}}
+  ORGANIZATION: ${{vars.TARGET_CLIENT_ORG}}
+  GITHUB_REPO_DESTINATION: "clusters-4wm-client"
+
+jobs:
+  delete:
+    if: github.event.ref_type == 'branch'
+    runs-on: 4wm-internal
+    steps:
+      - name: Generate a token for organization
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.GITHUB_APP_ID }}
+          private-key: ${{ secrets.GH_SSH_KEY_4WM_CI }}
+          owner: ${{ env.ORGANIZATION }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ env.ORGANIZATION }}/${{ env.GITHUB_REPO_DESTINATION }}
+          token: ${{ steps.generate-token.outputs.token }}
+          path: ${{ env.GITHUB_REPO_DESTINATION }}
+
+      - name: Branch Delete
+        run: |
+          cd ${{ env.GITHUB_REPO_DESTINATION }}
+          git push origin --delete ${{github.event.ref}}

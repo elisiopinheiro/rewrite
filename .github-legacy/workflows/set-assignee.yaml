@@ -1,0 +1,15 @@
+name: Set Assignee
+
+on:
+  pull_request:
+    types: [ opened ]
+    branches: [ main ]
+
+jobs:
+  set-assignee:
+    uses: 4WHEELS-TF/workflows/.github/workflows/set-assignee.yaml@main
+    with:
+      pr_number: ${{ github.event.number }}
+      pr_owner: ${{ github.event.pull_request.user.login }}
+    secrets:
+      app_private_key: ${{ secrets.REVIEW_REQUEST_PRIVATE_KEY }}

@@ -1,0 +1,16 @@
+name: Generate OpenAPI Spec and check for breaking changes
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+
+concurrency:
+  group: openapi-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  gen-openapi-spec-and-check-breaking-changes:
+    name: Generate OpenAPI Spec and check for breaking changes
+    uses: 4WHEELS-M/workflows/.github/workflows/gen-openapi-spec-check-breaking-changes.yaml@0.20.0
+    secrets: inherit

@@ -1,0 +1,91 @@
+name: Create Client library (OpenApi Generator)
+on:
+  push:
+    tags:
+      - "*"
+    branches-ignore:
+      - main
+
+env:
+  GITHUB_APP_ID: ${{vars.TARGET_CLIENT_APP_ID}}
+  ORGANIZATION: ${{vars.TARGET_CLIENT_ORG}}
+  GITHUB_REPO_DESTINATION: "clusters-4wm-client"
+  API_PACKAGE_NAME: "clusters_4wm_client"
+  API_PROJECT_NAME: "clusters-4wm-client"
+
+jobs:
+  build:
+    runs-on: 4wm-internal
+    steps:
+      - name: Change ownership of /github/home to avoid caching permission issues
+        run: sudo chown -R $(whoami) /home/runner
+
+      - name: Checkout repository source code
+        uses: actions/checkout@v5
+        with:
+          fetch-tags: true
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: .python-version
+          cache: poetry
+
+      - name: Set API_PACKAGE_VERSION
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            API_PACKAGE_VERSION="${GITHUB_REF_NAME}"
+          else
+            API_PACKAGE_VERSION="$(jq -r '."."' .release-please-manifest.json).dev0+$(git rev-parse --short HEAD)"
+          fi
+          echo "API_PACKAGE_VERSION=${API_PACKAGE_VERSION}" >> $GITHUB_ENV
+
+      - name: Generate a token for organization
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.GITHUB_APP_ID }}
+          private-key: ${{ secrets.GH_SSH_KEY_4WM_CI }}
+          owner: ${{ env.ORGANIZATION }}
+
+      - name: Checkout repository destination code
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ env.ORGANIZATION }}/${{ env.GITHUB_REPO_DESTINATION }}
+          token: ${{ steps.generate-token.outputs.token }}
+          path: ${{ env.GITHUB_REPO_DESTINATION }}
+
+      - name: Export OpenAPI spec
+        run: |
+          poetry install
+          poetry run python scripts/generate_openapi_spec.py
+
+      - name: Generate Python Client
+        uses: openapi-generators/openapitools-generator-action@v1
+        with:
+          generator: python
+          openapi-file: openapi.json
+          command-args: -o ${{ env.GITHUB_REPO_DESTINATION }} \
+            --additional-properties=packageName=${{ env.API_PACKAGE_NAME }},packageVersion=${{ env.API_PACKAGE_VERSION}},projectName=${{ env.API_PROJECT_NAME }},pydanticVersion=v2
+
+      - name: Push to the destination repository
+        run: |
+          cd ${{ env.GITHUB_REPO_DESTINATION }}
+          git config user.name '4WM-CI'
+          git config user.email ''
+          if [[ "${GITHUB_REF_TYPE}" == "branch" ]]; then
+            if [[ "${GITHUB_REF_NAME}" != "main" ]]; then
+              git checkout -B "${GITHUB_REF_NAME}"
+            else
+              echo "::error::You can't push to main branch"
+              exit 1
+            fi
+          fi
+          git add .
+          git commit -m "Add new ${API_PACKAGE_NAME} package version ${API_PACKAGE_VERSION}"
+          git push -f origin HEAD
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            git tag -a "${GITHUB_REF_NAME}" -m "New TAG"
+            git push origin --tags
+          fi

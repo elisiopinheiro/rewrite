@@ -1,0 +1,64 @@
+name: Docker CI
+
+on:
+  push:
+    tags:
+      - "*"
+      - "!terraform-*" # Exclude terraform & chart tags
+      - "!chart-*"
+    branches-ignore:
+      - main
+
+jobs:
+  process-tag:
+    if: github.actor != 'dependabot[bot]'
+    runs-on: 4wm-internal
+    name: Process tag name
+    outputs:
+      tag-name: ${{ steps.remove-app.outputs.TAG_NAME }}
+    steps:
+      - name: remove 'app-' from tag name
+        id: remove-app
+        run: |
+          TAG_NAME=${{ github.ref_name }}
+          TAG_NAME=${TAG_NAME#app-}
+          echo "TAG: ${TAG_NAME}"
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
+
+  generate-docker-secrets:
+    if: github.actor != 'dependabot[bot]'
+    runs-on: 4wm-internal
+    name: Generate Docker secrets
+    outputs:
+      docker_secrets: "${{ steps.encrypt-docker-secrets.outputs.docker_secrets }}"
+    steps:
+    - name: Generate a token for cluster client lib checkout
+      id: gen-gh-token
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.GH_4WM_CI_APP_ID }}
+        private-key: ${{ secrets.GH_SSH_KEY_4WM_CI }}
+        owner: 4WHEELS-M
+        skip-token-revoke: "true"
+    - name: Generate encrypted docker secrets
+      id: encrypt-docker-secrets
+      run: |
+        cat <<EOF  >>secrets.txt
+          github_token=${{ steps.gen-gh-token.outputs.token }}
+          VAULT_ROLE_ID=${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID=${{ secrets.VAULT_SECRET_ID }}
+        EOF
+        DOCKER_SECRETS=$(cat secrets.txt | gpg --passphrase ${{ secrets.GPG_PASSPHRASE }} -c --batch | base64 -w0)
+        echo "docker_secrets=${DOCKER_SECRETS}" >> "$GITHUB_OUTPUT"
+
+  push-image-to-AWS-ecr:
+    needs: [generate-docker-secrets, process-tag]
+    uses: 4WHEELS-M/workflows/.github/workflows/build-push-images-ecr.yaml@0.20.0
+    secrets: inherit
+    with:
+      AWS_ECR_REPO_TYPE: "private"
+      AWS_ECR_REPOSITORY: "${{ vars.ECR_REPO_NAME}}"
+      BUILD_CONTEXT: "."
+      DOCKERFILE_PATH: "Dockerfile"
+      IMAGE_TAG: ${{ needs.process-tag.outputs.tag-name }}
+      DOCKER_SECRETS: ${{ needs.generate-docker-secrets.outputs.docker_secrets }}

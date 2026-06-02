@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    groups:
+      actions-updates:
+        patterns:
+          - "*"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+  - package-ecosystem: pip
+    directory: /
+    open-pull-requests-limit: 5
+    schedule:
+      interval: monthly
+    groups:
+      lower-risk-updates:
+        update-types:
+          - patch
+          - minor
+      prod-security-updates:
+        applies-to: security-updates
+        dependency-type: production
+    allow:
+      - dependency-type: all
+    commit-message:
+      prefix: chore
+      include: scope

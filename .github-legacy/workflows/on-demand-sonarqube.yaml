@@ -1,0 +1,30 @@
+name: SonarQube on-demand run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      branch-name:
+        description: 'Branch name to run the checks on, defaults to "main"'
+        type: string
+        required: true
+        default: 'main'
+
+jobs:
+  tests:
+    uses: 4WHEELS-M/workflows/.github/workflows/python-tests.yaml@0.20.0
+    secrets: inherit
+    with:
+      branch-name: ${{ github.event.pull_request.head.ref }}
+
+  static-code-analysis:
+    needs: tests
+    uses: 4WHEELS-M/workflows/.github/workflows/sonarqube.yaml@0.20.0
+    with:
+      branch-name: ${{ inputs.branch-name }}
+      coverage-report-artifact: coverage-report-artifact
+      enforce-quality-gate: true
+    secrets:
+      sonar-token: ${{ secrets.SONAR_TOKEN }}

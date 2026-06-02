@@ -1,44 +1,38 @@
 name: CI
 
 on:
-  push:
-    branches: [main, clean-rewrite]
   pull_request:
 
-permissions:
-  contents: read
-
 concurrency:
-  group: ci-${{ github.ref }}
+  # Per-PR group: a new push cancels the run for the now-stale commit, and that
+  # commit's run re-analyzes and reports a fresh quality gate — the PR head is
+  # always evaluated.
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  checks:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  pre-commit:
+    name: Pre-commit checks
+    uses: 4WHEELS-M/workflows/.github/workflows/pre-commit.yaml@0.20.0
+    with:
+      branch-name: ${{ github.event.pull_request.head.ref }}
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
+  tests:
+    name: Tests
+    needs: pre-commit
+    uses: 4WHEELS-M/workflows/.github/workflows/python-tests.yaml@0.20.0
+    secrets: inherit
+    with:
+      branch-name: ${{ github.event.pull_request.head.ref }}
+      pr-number: ${{ github.event.pull_request.number }}
 
-      - name: Sync dependencies
-        run: uv sync --frozen --all-groups
-
-      - name: Lint (ruff)
-        run: |
-          uv run ruff check src tests migrations
-          uv run ruff format --check src tests migrations
-
-      - name: Type check (mypy)
-        run: uv run mypy src
-
-      - name: Tests
-        run: uv run pytest
-
-      - name: OpenAPI spec is up to date
-        run: |
-          PYTHONPATH=src uv run python scripts/generate_openapi_spec.py
-          git diff --exit-code openapi.json \
-            || (echo "::error::openapi.json is stale — run scripts/generate_openapi_spec.py and commit." && exit 1)
+  static-code-analysis:
+    name: Static code analysis
+    needs: tests
+    uses: 4WHEELS-M/workflows/.github/workflows/sonarqube.yaml@0.20.0
+    with:
+      branch-name: ${{ github.event.pull_request.head.ref }}
+      coverage-report-artifact: coverage-report-artifact
+      enforce-quality-gate: true
+    secrets:
+      sonar-token: ${{ secrets.SONAR_TOKEN }}

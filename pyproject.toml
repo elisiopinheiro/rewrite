@@ -75,3 +75,9 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["--strict-markers", "--strict-config"]
+
+[[tool.uv.index]]
+name = "artifactory"
+url = "https://<artifactory-host>/artifactory/api/pypi/<pypi-repo>/simple"
+publish-url = "https://<artifactory-host>/artifactory/api/pypi/<pypi-repo>"
+explicit = true

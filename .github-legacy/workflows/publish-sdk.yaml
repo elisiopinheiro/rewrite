@@ -1,0 +1,66 @@
+name: Publish SDK
+
+# Generates the Python client from the OpenAPI spec (openapi-python-client, via
+# scripts/generate_sdk.sh) and publishes the built distribution to the internal
+# Artifactory PyPI repository with `uv publish --index`.
+#
+# Replaces the old push-the-generated-source-into-a-repo model
+# (client-lib-creation.yaml / client-lib-branch-cleanup.yaml, now removed).
+#
+# The `artifactory` index — its publish-url and read url — is defined under
+# [[tool.uv.index]] in the repo-root pyproject.toml. `uv publish` reads it from
+# there, so the checkout step is required.
+
+on:
+  push:
+    tags: ["*"] # release-please tags (e.g. 3.1.0); no prefix, no leading v
+  workflow_dispatch: # manual dev/snapshot publish
+
+# Publishing authenticates to Artifactory with a token secret, not GITHUB_TOKEN.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.11.15"
+
+jobs:
+  publish:
+    name: Build & publish client to Artifactory
+    runs-on: 4wm-internal # internal network access to Artifactory
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: astral-sh/setup-uv@v8
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+
+      - name: Resolve SDK version
+        id: version
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            # Release: version is the tag itself.
+            echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            # Manual run: PEP 440 dev version off the current release manifest.
+            base="$(jq -r '."."' .release-please-manifest.json)"
+            echo "value=${base}.dev0+$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate client SDK
+        env:
+          OPENAPI_PYTHON_CLIENT_PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        run: bash scripts/generate_sdk.sh generated-sdk
+
+      - name: Build distribution
+        run: uv build generated-sdk --out-dir dist
+
+      - name: Publish to Artifactory
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+        # `--index artifactory` resolves the publish-url from pyproject.toml.
+        run: uv publish dist/* --index artifactory

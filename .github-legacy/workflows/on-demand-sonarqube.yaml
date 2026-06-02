@@ -17,13 +17,14 @@ jobs:
     uses: 4WHEELS-M/workflows/.github/workflows/python-tests.yaml@0.20.0
     secrets: inherit
     with:
-      branch-name: ${{ github.event.pull_request.head.ref }}
+      # push:main has no inputs and no PR context, so fall back to the ref name.
+      branch-name: ${{ inputs.branch-name || github.ref_name }}
 
   static-code-analysis:
     needs: tests
     uses: 4WHEELS-M/workflows/.github/workflows/sonarqube.yaml@0.20.0
     with:
-      branch-name: ${{ inputs.branch-name }}
+      branch-name: ${{ inputs.branch-name || github.ref_name }}
       coverage-report-artifact: coverage-report-artifact
       enforce-quality-gate: true
     secrets:

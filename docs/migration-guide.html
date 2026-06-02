@@ -1,466 +1,1513 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Clusters Metadata API — Rewrite &amp; Migration Guide</title>
-<style>
-  :root {
-    --bg: #0d1117; --surface: #161b22; --surface-2: #1c2128; --border: #30363d;
-    --text: #e6edf3; --muted: #9198a1; --accent: #58a6ff; --green: #3fb950;
-    --amber: #d29922; --red: #f85149; --purple: #bc8cff;
-    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans);
-    line-height: 1.65; font-size: 16px; -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px 96px; }
-  header.hero {
-    border-bottom: 1px solid var(--border);
-    background: radial-gradient(1200px 300px at 20% -10%, rgba(88,166,255,.12), transparent 60%), var(--bg);
-    padding: 56px 0 40px;
-  }
-  header.hero .wrap { padding-bottom: 0; }
-  .eyebrow { color: var(--accent); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 12px; }
-  h1 { font-size: 40px; line-height: 1.15; margin: 10px 0 12px; letter-spacing: -.02em; }
-  .lede { color: var(--muted); font-size: 18px; max-width: 760px; margin: 0; }
-  .meta { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--border);
-          border-radius: 999px; padding: 4px 12px; color: var(--muted); }
-  .chip b { color: var(--text); font-weight: 600; }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clusters Metadata API — Rewrite &amp; Migration Guide</title>
+    <style>
+      :root {
+        --bg: #0d1117;
+        --surface: #161b22;
+        --surface-2: #1c2128;
+        --border: #30363d;
+        --text: #e6edf3;
+        --muted: #9198a1;
+        --accent: #58a6ff;
+        --green: #3fb950;
+        --amber: #d29922;
+        --red: #f85149;
+        --purple: #bc8cff;
+        --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.65;
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 0 24px 96px;
+      }
+      header.hero {
+        border-bottom: 1px solid var(--border);
+        background: radial-gradient(1200px 300px at 20% -10%, rgba(88, 166, 255, 0.12), transparent 60%), var(--bg);
+        padding: 56px 0 40px;
+      }
+      header.hero .wrap {
+        padding-bottom: 0;
+      }
+      .eyebrow {
+        color: var(--accent);
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+      h1 {
+        font-size: 40px;
+        line-height: 1.15;
+        margin: 10px 0 12px;
+        letter-spacing: -0.02em;
+      }
+      .lede {
+        color: var(--muted);
+        font-size: 18px;
+        max-width: 780px;
+        margin: 0;
+      }
+      .meta {
+        margin-top: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .chip {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 4px 12px;
+        color: var(--muted);
+      }
+      .chip b {
+        color: var(--text);
+        font-weight: 600;
+      }
 
-  h2 { font-size: 26px; margin: 56px 0 6px; letter-spacing: -.01em; scroll-margin-top: 20px; }
-  h2 .num { color: var(--accent); font-family: var(--mono); font-size: 18px; margin-right: 10px; }
-  h3 { font-size: 18px; margin: 28px 0 8px; }
-  .sub { color: var(--muted); margin: 4px 0 20px; }
-  p { margin: 12px 0; }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  code { font-family: var(--mono); font-size: .87em; background: var(--surface-2);
-         border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; color: #d2a8ff; }
-  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+      h2 {
+        font-size: 26px;
+        margin: 56px 0 6px;
+        letter-spacing: -0.01em;
+        scroll-margin-top: 20px;
+      }
+      h2 .num {
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 18px;
+        margin-right: 10px;
+      }
+      h3 {
+        font-size: 18px;
+        margin: 28px 0 8px;
+      }
+      .sub {
+        color: var(--muted);
+        margin: 4px 0 20px;
+      }
+      p {
+        margin: 12px 0;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      code {
+        font-family: var(--mono);
+        font-size: 0.87em;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1px 6px;
+        color: #d2a8ff;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 40px 0;
+      }
 
-  /* TOC */
-  nav.toc { background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-            padding: 18px 22px; margin: 28px 0 8px; }
-  nav.toc h4 { margin: 0 0 10px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  nav.toc ol { margin: 0; padding-left: 22px; columns: 2; column-gap: 36px; }
-  nav.toc li { margin: 5px 0; }
-  @media (max-width: 640px) { nav.toc ol { columns: 1; } h1 { font-size: 30px; } }
+      /* TOC */
+      nav.toc {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin: 28px 0 8px;
+      }
+      nav.toc h4 {
+        margin: 0 0 10px;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      nav.toc ol {
+        margin: 0;
+        padding-left: 22px;
+        columns: 2;
+        column-gap: 36px;
+      }
+      nav.toc li {
+        margin: 5px 0;
+      }
+      @media (max-width: 640px) {
+        nav.toc ol {
+          columns: 1;
+        }
+        h1 {
+          font-size: 30px;
+        }
+      }
 
-  /* Cards / callouts */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; margin: 18px 0; }
-  .callout { border-radius: 12px; padding: 14px 18px; margin: 16px 0; border: 1px solid var(--border);
-             border-left-width: 4px; background: var(--surface); }
-  .callout .ttl { font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 8px; }
-  .callout p { margin: 6px 0 0; color: var(--text); }
-  .crit { border-left-color: var(--red); background: rgba(248,81,73,.07); }
-  .warn { border-left-color: var(--amber); background: rgba(210,153,34,.07); }
-  .info { border-left-color: var(--accent); background: rgba(88,166,255,.07); }
-  .ok   { border-left-color: var(--green); background: rgba(63,185,80,.07); }
-  .crit .ttl { color: var(--red); } .warn .ttl { color: var(--amber); }
-  .info .ttl { color: var(--accent); } .ok .ttl { color: var(--green); }
+      /* Cards / callouts */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 22px 24px;
+        margin: 18px 0;
+      }
+      .callout {
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin: 16px 0;
+        border: 1px solid var(--border);
+        border-left-width: 4px;
+        background: var(--surface);
+      }
+      .callout .ttl {
+        font-weight: 700;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .callout p {
+        margin: 6px 0 0;
+        color: var(--text);
+      }
+      .crit {
+        border-left-color: var(--red);
+        background: rgba(248, 81, 73, 0.07);
+      }
+      .warn {
+        border-left-color: var(--amber);
+        background: rgba(210, 153, 34, 0.07);
+      }
+      .info {
+        border-left-color: var(--accent);
+        background: rgba(88, 166, 255, 0.07);
+      }
+      .ok {
+        border-left-color: var(--green);
+        background: rgba(63, 185, 80, 0.07);
+      }
+      .crit .ttl {
+        color: var(--red);
+      }
+      .warn .ttl {
+        color: var(--amber);
+      }
+      .info .ttl {
+        color: var(--accent);
+      }
+      .ok .ttl {
+        color: var(--green);
+      }
 
-  /* Tables */
-  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; }
-  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  th { color: var(--muted); font-weight: 600; font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase;
-       background: var(--surface-2); }
-  tr:last-child td { border-bottom: none; }
-  table.bordered { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  td code { font-size: .84em; }
-  .legacy-c { color: var(--amber); } .new-c { color: var(--green); }
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 18px 0;
+        font-size: 14.5px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 12.5px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: var(--surface-2);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      table.bordered {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      td code {
+        font-size: 0.84em;
+      }
+      .legacy-c {
+        color: var(--amber);
+      }
+      .new-c {
+        color: var(--green);
+      }
+      .theme-c {
+        color: var(--purple);
+        font-weight: 600;
+      }
 
-  /* Badges */
-  .badge { font-family: var(--mono); font-size: 11px; font-weight: 700; border-radius: 5px; padding: 2px 7px;
-           letter-spacing: .03em; white-space: nowrap; }
-  .b-crit { background: rgba(248,81,73,.16); color: #ff9a91; }
-  .b-high { background: rgba(210,153,34,.16); color: #e3b341; }
-  .b-med  { background: rgba(88,166,255,.16); color: #79b8ff; }
+      /* Badges */
+      .badge {
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 5px;
+        padding: 2px 7px;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+      }
+      .b-crit {
+        background: rgba(248, 81, 73, 0.16);
+        color: #ff9a91;
+      }
+      .b-high {
+        background: rgba(210, 153, 34, 0.16);
+        color: #e3b341;
+      }
+      .b-med {
+        background: rgba(88, 166, 255, 0.16);
+        color: #79b8ff;
+      }
+      .b-ok {
+        background: rgba(63, 185, 80, 0.16);
+        color: #56d364;
+      }
 
-  /* Two-column grid */
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0; }
-  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
-  .col h4 { margin: 0 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
-  .col.legacy h4 { color: var(--amber); } .col.new h4 { color: var(--green); }
-  .layer { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px;
-           margin: 8px 0; font-family: var(--mono); font-size: 13px; }
-  .layer span { color: var(--muted); font-family: var(--sans); float: right; font-size: 12px; }
+      /* Column grids */
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin: 18px 0;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+        margin: 18px 0;
+      }
+      @media (max-width: 760px) {
+        .grid2,
+        .grid3 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .col h4 {
+        margin: 0 0 12px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .col.legacy h4 {
+        color: var(--amber);
+      }
+      .col.new h4 {
+        color: var(--green);
+      }
+      .layer {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 9px 13px;
+        margin: 8px 0;
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+      .layer span {
+        color: var(--muted);
+        font-family: var(--sans);
+        float: right;
+        font-size: 12px;
+      }
 
-  /* Stepper */
-  .stepper { margin: 20px 0; padding: 0; list-style: none; }
-  .stepper li { position: relative; padding: 0 0 22px 52px; }
-  .stepper li:before { content: counter(step); counter-increment: step;
-    position: absolute; left: 0; top: 0; width: 34px; height: 34px; border-radius: 50%;
-    background: var(--surface-2); border: 1px solid var(--accent); color: var(--accent);
-    display: grid; place-items: center; font-weight: 700; font-family: var(--mono); }
-  .stepper { counter-reset: step; }
-  .stepper li:after { content: ""; position: absolute; left: 17px; top: 34px; bottom: 0; width: 2px; background: var(--border); }
-  .stepper li:last-child { padding-bottom: 0; }
-  .stepper li:last-child:after { display: none; }
-  .stepper .st { font-weight: 600; }
-  .stepper .sd { color: var(--muted); font-size: 14px; }
+      /* Artifact cards */
+      .artifact {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 18px 16px;
+        border-top-width: 3px;
+      }
+      .artifact.a-legacy {
+        border-top-color: var(--amber);
+      }
+      .artifact.a-compat {
+        border-top-color: var(--accent);
+      }
+      .artifact.a-rewrite {
+        border-top-color: var(--green);
+      }
+      .artifact .br {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .artifact h4 {
+        margin: 4px 0 8px;
+        font-size: 15px;
+      }
+      .artifact p {
+        margin: 0;
+        font-size: 13.5px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .artifact .tag {
+        display: inline-block;
+        margin-top: 12px;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 5px;
+        padding: 2px 8px;
+      }
+      .a-legacy .tag {
+        background: rgba(210, 153, 34, 0.16);
+        color: #e3b341;
+      }
+      .a-compat .tag {
+        background: rgba(88, 166, 255, 0.16);
+        color: #79b8ff;
+      }
+      .a-rewrite .tag {
+        background: rgba(63, 185, 80, 0.16);
+        color: #56d364;
+      }
 
-  /* Diagram frame */
-  figure { margin: 22px 0; }
-  .diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
-  .diagram svg { width: 100%; height: auto; display: block; }
-  figcaption { color: var(--muted); font-size: 13px; text-align: center; margin-top: 10px; }
-  .svg-box { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.5; }
-  .svg-box.legacy { stroke: var(--amber); }
-  .svg-box.rewrite { stroke: var(--green); }
-  .svg-box.head { fill: rgba(63,185,80,.14); stroke: var(--green); }
-  .svg-t { fill: var(--text); font: 600 15px var(--sans); text-anchor: middle; }
-  .svg-st { fill: var(--muted); font: 12px var(--sans); text-anchor: middle; }
-  .svg-mono { fill: var(--text); font: 13px var(--mono); text-anchor: middle; }
-  .svg-pill { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.5; }
-  .svg-note { fill: var(--muted); font: italic 13px var(--sans); text-anchor: middle; }
-  .svg-line { stroke: var(--muted); stroke-width: 2; fill: none; }
-  .svg-dash { stroke: var(--border); stroke-width: 1.5; stroke-dasharray: 6 5; fill: none; }
+      /* Stepper */
+      .stepper {
+        margin: 20px 0;
+        padding: 0;
+        list-style: none;
+      }
+      .stepper li {
+        position: relative;
+        padding: 0 0 22px 52px;
+      }
+      .stepper li:before {
+        content: counter(step);
+        counter-increment: step;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--surface-2);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-family: var(--mono);
+      }
+      .stepper {
+        counter-reset: step;
+      }
+      .stepper li:after {
+        content: "";
+        position: absolute;
+        left: 17px;
+        top: 34px;
+        bottom: 0;
+        width: 2px;
+        background: var(--border);
+      }
+      .stepper li:last-child {
+        padding-bottom: 0;
+      }
+      .stepper li:last-child:after {
+        display: none;
+      }
+      .stepper .st {
+        font-weight: 600;
+      }
+      .stepper .sd {
+        color: var(--muted);
+        font-size: 14px;
+      }
 
-  footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
-  ul.tight li { margin: 5px 0; }
+      /* Diagram frame */
+      figure {
+        margin: 22px 0;
+      }
+      .diagram {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+      }
+      .diagram svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      figcaption {
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+        margin-top: 10px;
+      }
+      .svg-box {
+        fill: var(--surface-2);
+        stroke: var(--border);
+        stroke-width: 1.5;
+      }
+      .svg-box.legacy {
+        stroke: var(--amber);
+      }
+      .svg-box.rewrite {
+        stroke: var(--green);
+      }
+      .svg-box.head {
+        fill: rgba(63, 185, 80, 0.14);
+        stroke: var(--green);
+      }
+      .svg-box.compat {
+        fill: rgba(88, 166, 255, 0.12);
+        stroke: var(--accent);
+      }
+      .svg-t {
+        fill: var(--text);
+        font: 600 15px var(--sans);
+        text-anchor: middle;
+      }
+      .svg-st {
+        fill: var(--muted);
+        font: 12px var(--sans);
+        text-anchor: middle;
+      }
+      .svg-mono {
+        fill: var(--text);
+        font: 13px var(--mono);
+        text-anchor: middle;
+      }
+      .svg-note {
+        fill: var(--muted);
+        font: italic 13px var(--sans);
+        text-anchor: middle;
+      }
+      .svg-line {
+        stroke: var(--muted);
+        stroke-width: 2;
+        fill: none;
+      }
+      .svg-dash {
+        stroke: var(--border);
+        stroke-width: 1.5;
+        stroke-dasharray: 6 5;
+        fill: none;
+      }
 
-  /* Code blocks */
-  pre { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
-        padding: 13px 16px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px;
-        line-height: 1.55; margin: 12px 0; color: var(--text); white-space: pre; }
-  pre .c { color: var(--muted); } pre .k { color: var(--accent); } pre .s { color: #7ee787; }
-  .snip h4 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
-  .snip.legacy h4 { color: var(--amber); } .snip.new h4 { color: var(--green); }
-</style>
-</head>
-<body>
+      footer {
+        margin-top: 64px;
+        padding-top: 22px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 13px;
+      }
+      ul.tight li {
+        margin: 5px 0;
+      }
 
-<header class="hero">
-  <div class="wrap">
-    <div class="eyebrow">Platform / API · Engineering Guide</div>
-    <h1>Clusters Metadata API — Rewrite &amp; Migration Guide</h1>
-    <p class="lede">Why we rewrote <code>clusters-4wm</code>, what changed in the new service, what we had to adapt
-      in the legacy app so both can run against the <b>same database</b> for the months-long migration window, and how
-      the migration is designed to deploy with zero downtime.</p>
-    <div class="meta">
-      <span class="chip">legacy: <b>clusters-4wm</b></span>
-      <span class="chip">new: <b>clusters-metadata-api</b></span>
-      <span class="chip">shared DB: <b>clusters4wm</b></span>
-      <span class="chip">prod Alembic head: <b>73aee50345b2</b></span>
-      <span class="chip">stack: <b>FastAPI · Pydantic v2 · SQLAlchemy 2 · uv</b></span>
-    </div>
-  </div>
-</header>
+      /* Code blocks */
+      pre {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 13px 16px;
+        overflow-x: auto;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.55;
+        margin: 12px 0;
+        color: var(--text);
+        white-space: pre;
+      }
+      pre .c {
+        color: var(--muted);
+      }
+      pre .k {
+        color: var(--accent);
+      }
+      pre .s {
+        color: #7ee787;
+      }
+      .snip h4 {
+        margin: 0 0 6px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .snip.legacy h4 {
+        color: var(--amber);
+      }
+      .snip.new h4 {
+        color: var(--green);
+      }
+      /* Part dividers + grouped TOC */
+      .part {
+        margin: 66px 0 0;
+        padding: 20px 24px;
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--accent);
+        border-radius: 12px;
+        background: linear-gradient(90deg, rgba(88, 166, 255, 0.1), transparent 72%);
+        scroll-margin-top: 20px;
+      }
+      .part-k {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .part-t {
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 2px 0 4px;
+      }
+      .part-d {
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .toc-cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 22px;
+        margin-top: 4px;
+      }
+      @media (max-width: 760px) {
+        .toc-cols {
+          grid-template-columns: 1fr;
+        }
+      }
+      .toc-part {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 700;
+        margin: 0 0 8px;
+      }
+      .toc-group ul {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+      }
+      .toc-group li {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap">
+        <div class="eyebrow">Platform / API · Engineering Guide</div>
+        <h1>Clusters Metadata API — Rewrite &amp; Migration Guide</h1>
+        <p class="lede">
+          Why we rewrote <code>clusters-4wm</code>, what the new service changes, and the trick that lets the old and new apps run against the <b>same database</b> through a months-long migration —
+          deployed with zero downtime and <b>no migration on the live schema</b>.
+        </p>
+        <div class="meta">
+          <span class="chip">legacy: <b>clusters-4wm</b></span>
+          <span class="chip">rewrite: <b>clusters-metadata-api</b></span>
+          <span class="chip">shared DB: <b>clusters4wm</b></span>
+          <span class="chip">prod head today: <b>5e67ef3550c0</b></span>
+          <span class="chip">alignment id: <b>73aee50345b2</b></span>
+          <span class="chip">stack: <b>FastAPI · Pydantic v2 · SQLAlchemy 2 · uv</b></span>
+        </div>
+      </div>
+    </header>
 
-<div class="wrap">
+    <div class="wrap">
+            <nav class="toc">
+        <h4>Contents</h4>
+        <div class="toc-cols">
+          <div class="toc-group">
+            <div class="toc-part">I · Overview</div>
+            <ul>
+              <li><a href="#why">01 · Why the rewrite</a></li>
+              <li><a href="#artifacts">02 · Three artifacts, one database</a></li>
+              <li><a href="#surface">03 · The service &amp; its API surface</a></li>
+              <li><a href="#coexistence">04 · Coexistence architecture</a></li>
+            </ul>
+          </div>
+          <div class="toc-group">
+            <div class="toc-part">II · Compatibility changes</div>
+            <ul>
+              <li><a href="#db">05 · Database &amp; the no-op deploy</a></li>
+              <li><a href="#schema">06 · Schema changes (shared DB)</a></li>
+              <li><a href="#patch">07 · The legacy compatibility patch</a></li>
+              <li><a href="#deploy">08 · Deploy sequencing</a></li>
+              <li><a href="#helm">09 · Deployment &amp; Helm</a></li>
+              <li><a href="#rules">10 · Operating rules</a></li>
+            </ul>
+          </div>
+          <div class="toc-group">
+            <div class="toc-part">III · The rewrite</div>
+            <ul>
+              <li><a href="#structure">11 · Code structure</a></li>
+              <li><a href="#contract">12 · API contract &amp; behavior</a></li>
+              <li><a href="#endpoints">13 · Endpoint map (legacy → v3)</a></li>
+              <li><a href="#tooling">14 · Tooling, config &amp; stack</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
 
-<nav class="toc">
-  <h4>Contents</h4>
-  <ol>
-    <li><a href="#why">Why the rewrite</a></li>
-    <li><a href="#surface">The service &amp; its API surface</a></li>
-    <li><a href="#coexistence">Coexistence architecture</a></li>
-    <li><a href="#structure">Code structure: before &amp; after</a></li>
-    <li><a href="#db">Database &amp; migration strategy</a></li>
-    <li><a href="#deploy">Deploy sequencing</a></li>
-    <li><a href="#schema">Schema changes (the shared DB)</a></li>
-    <li><a href="#legacy">What we adapted in legacy</a></li>
-    <li><a href="#contract">API contract &amp; behavior changes</a></li>
-    <li><a href="#tooling">Tooling &amp; stack changes</a></li>
-    <li><a href="#rules">Operating rules during coexistence</a></li>
-  </ol>
-</nav>
+      <div class="callout info">
+        <div class="ttl">▶ TL;DR</div>
+        <p>
+          <code>clusters-4wm</code> is being replaced by a clean rewrite, <code>clusters-metadata-api</code> (new <code>/v3</code> API + SDK). Because consumers migrate over months, both apps must run
+          <b>at the same time against the same PostgreSQL database</b>. We make that work with three Git artifacts and one clever alignment: a one-time compatibility migration
+          (<code>73aee50345b2</code>) reshapes the shared schema and patches the legacy app to match; the rewrite ships a single
+          <b>squashed baseline migration whose id <em>equals</em> that production head</b>, so deploying the rewrite runs <b>no migration</b> on the live DB. The same Helm chart deploys both the
+          internal and partner apps — pointed at the <b>existing</b> RDS. After cutover the rewrite owns the schema and legacy is frozen.
+        </p>
+      </div>
 
-<div class="callout info">
-  <div class="ttl">▶ TL;DR</div>
-  <p><code>clusters-4wm</code> is being replaced by a clean rewrite, <code>clusters-metadata-api</code>. Both run in
-  parallel against the <b>same</b> PostgreSQL database while consumers migrate to the new <code>/v3</code> API and SDK.
-  To make the existing schema fit the new app, we applied a one-time compatibility migration (<code>73aee50345b2</code>)
-  to legacy and patched a little legacy code. The new app ships a single <b>squashed baseline migration whose id equals
-  the production Alembic head</b>, so deploying it runs <b>no migration</b> on the live DB. After cutover the rewrite
-  owns the schema and legacy is frozen.</p>
-</div>
+      <!-- ============================================================= -->
+      <div class="part">
+        <div class="part-k">Part I</div>
+        <div class="part-t">Overview</div>
+        <div class="part-d">Why we're doing this, the three Git artifacts, and how two services share one database.</div>
+      </div>
+      <h2 id="why"><span class="num">01</span>Why the rewrite</h2>
+      <p>
+        The legacy <code>clusters-4wm</code> service accumulated patterns that were costly to evolve: model classes that were simultaneously the database table, the validator and the API schema; data
+        access mixed into routers; two parallel API versions (<code>/v1</code> + <code>/v2</code>); and no enforced quality tooling. The domain itself is small — CRUD over cluster metadata — so a
+        clean rewrite was faster and safer than untangling the old codebase in place. The rewrite also takes a new canonical identity:
+      </p>
 
-<!-- ============================================================= -->
-<h2 id="why"><span class="num">01</span>Why the rewrite</h2>
-<p>The legacy <code>clusters-4wm</code> service accumulated patterns that were costly to evolve. Because the domain is
-essentially CRUD over managed-cluster metadata, a clean rewrite was faster and safer than incrementally untangling the
-old codebase. The rewrite also takes a new canonical identity:</p>
+      <table class="bordered">
+        <tr>
+          <th>Area</th>
+          <th>Legacy</th>
+          <th>New</th>
+        </tr>
+        <tr>
+          <td>Service / chart</td>
+          <td class="legacy-c"><code>clusters-4wm</code></td>
+          <td class="new-c"><code>clusters-metadata-api</code></td>
+        </tr>
+        <tr>
+          <td>API surface</td>
+          <td class="legacy-c"><code>/v1</code>, <code>/v2</code></td>
+          <td class="new-c"><code>/v3</code></td>
+        </tr>
+        <tr>
+          <td>Generated SDK</td>
+          <td class="legacy-c"><code>clusters-4wm-client</code></td>
+          <td class="new-c"><code>clusters-metadata-sdk</code></td>
+        </tr>
+        <tr>
+          <td>Chart version</td>
+          <td class="legacy-c"><code>1.5.0</code></td>
+          <td class="new-c"><code>3.0.0</code></td>
+        </tr>
+      </table>
 
-<table class="bordered">
-  <tr><th>Area</th><th>Legacy</th><th>New</th></tr>
-  <tr><td>Service / chart</td><td class="legacy-c"><code>clusters-4wm</code></td><td class="new-c"><code>clusters-metadata-api</code></td></tr>
-  <tr><td>API surface</td><td class="legacy-c"><code>/v1</code>, <code>/v2</code></td><td class="new-c"><code>/v3</code></td></tr>
-  <tr><td>Generated SDK</td><td class="legacy-c"><code>clusters-4wm-client</code></td><td class="new-c"><code>clusters-metadata-sdk</code></td></tr>
-</table>
+      <p>
+        The hard constraint: there is no big-bang switch. Consumers move in waves, so legacy and new must run <b>simultaneously against one shared database</b> and stay mutually compatible the whole
+        time. Everything that follows is a consequence of that one rule.
+      </p>
 
-<p>The hard constraint: we cannot do a big-bang switch. Consumers migrate in waves over months, so the legacy and new
-services must run <b>simultaneously against one shared database</b> and stay compatible the whole time.</p>
+      <!-- ============================================================= -->
+      <h2 id="artifacts"><span class="num">02</span>Three artifacts, one database</h2>
+      <p class="sub">The piece most people miss: this is not a two-way "old vs new" story. There are <b>three</b> code artifacts in play, and only the middle one ever touches production schema.</p>
 
-<!-- ============================================================= -->
-<h2 id="surface"><span class="num">02</span>The service &amp; its API surface</h2>
-<p class="sub">What the application actually is, before we get to how it migrates.</p>
-<p><code>clusters-metadata-api</code> is a CRUD service over managed-cluster metadata — clusters and the things attached
-to them (features, locks, operations, releases). One codebase ships <b>two FastAPI apps</b>:</p>
-<div class="grid2">
-  <div class="col new card">
-    <h4>Internal API — <code>app.main:app</code></h4>
-    <div class="layer">/v3/clusters <span>CRUD · status</span></div>
-    <div class="layer">/v3/features <span>list · create · delete</span></div>
-    <div class="layer">/v3/locks <span>acquire / release per cluster</span></div>
-    <div class="layer">/v3/operations <span>per-cluster operation log</span></div>
-    <div class="layer">/v3/releases <span>release catalog</span></div>
-  </div>
-  <div class="col new card">
-    <h4>Partner API — <code>app.partner:app</code></h4>
-    <div class="layer">read-only <span>cluster views</span></div>
-    <div class="layer">SCP · SOLAR <span>per-partner projections</span></div>
-    <div class="layer">role-filtered <span>{count, items}</span></div>
-  </div>
-</div>
-<p>The <b>internal API</b> is the full read/write management surface used by 4Wheels tooling. The <b>partner API</b> is a
-narrow, read-only projection for external consumers (SCP, Cloud Foundation, SOLAR). Both run from the same image,
-selected by command (see §04).</p>
+      <div class="grid3">
+        <div class="artifact a-legacy">
+          <div class="br">branch: main</div>
+          <h4>① Legacy — as it is today</h4>
+          <p>The original <code>clusters-4wm</code> running in production right now. Untouched. The starting point, not part of the coexistence window.</p>
+          <span class="tag">the "before"</span>
+        </div>
+        <div class="artifact a-compat">
+          <div class="br">branch: legacy-v3-compat</div>
+          <h4>② Legacy + compat patch</h4>
+          <p>
+            The same app plus <b>one commit</b>: the <code>73aee50345b2</code> schema migration and a small, surgical code patch so legacy keeps working against the reshaped schema.
+            <b>This is what actually runs during coexistence.</b>
+          </p>
+          <span class="tag">runs in prod, then frozen</span>
+        </div>
+        <div class="artifact a-rewrite">
+          <div class="br">branch: clean-rewrite</div>
+          <h4>③ The rewrite</h4>
+          <p>The ground-up <code>clusters-metadata-api</code> — FastAPI, Pydantic v2, SQLAlchemy 2, layered architecture, <code>/v3</code>. Independent history. Serves migrated consumers.</p>
+          <span class="tag">the "after"</span>
+        </div>
+      </div>
 
-<h3>Authentication</h3>
-<p>Auth is <b>unchanged from legacy</b> — HTTP Basic over TLS. The internal API checks a single credential pair; the
-partner API accepts one credential pair per partner and adds <b>role-based authorization</b>
-(<code>require_roles</code>): each partner sees only its own resources, with the <code>M4W</code> role implicitly
-allowed everywhere. The rewrite only refactors the implementation (credentials come from typed settings, roles are a
-<code>StrEnum</code>) — the scheme, the four partner accounts, and the role model are identical, so existing
-credentials keep working.</p>
+      <div class="callout info">
+        <div class="ttl">▶ How to read this guide</div>
+        <p>
+          Artifact ② is the bridge. §06 is the <b>schema half</b> of its single commit (what the migration does to the shared DB); §07 is the <b>code half</b> (how legacy adapts). Everything about
+          artifact ③ — structure, contract, tooling — lives in §11, §12 and §14.
+        </p>
+      </div>
 
-<!-- ============================================================= -->
-<h2 id="coexistence"><span class="num">03</span>Coexistence architecture</h2>
-<p class="sub">Two services, one database. Legacy keeps serving existing consumers; the rewrite serves migrated ones.</p>
+      <!-- ============================================================= -->
+      <h2 id="surface"><span class="num">03</span>The service &amp; its API surface</h2>
+      <p class="sub">What the application actually is, before we get to how it migrates.</p>
+      <p>
+        <code>clusters-metadata-api</code> is a CRUD service over cluster metadata — clusters and the things attached to them (features, locks, operations, releases, namespaces, node pools,
+        webhooks…). One codebase ships <b>two FastAPI apps</b>, both under the <code>/v3</code> prefix:
+      </p>
+      <div class="grid2">
+        <div class="col new card">
+          <h4>Internal API — <code>app.main:app</code></h4>
+          <div class="layer">/v3/clusters <span>CRUD · status</span></div>
+          <div class="layer">/v3/features <span>list · create · delete</span></div>
+          <div class="layer">/v3/clusters/{name}/lock <span>acquire / release</span></div>
+          <div class="layer">/v3/clusters/{name}/operations <span>operation log</span></div>
+          <div class="layer">/v3/releases <span>list · get · create · delete</span></div>
+        </div>
+        <div class="col new card">
+          <h4>Partner API — <code>app.partner:app</code></h4>
+          <div class="layer">/v3/partners/scp/clusters <span>SCP · CF view</span></div>
+          <div class="layer">/v3/partners/solar/clusters <span>SOLAR view</span></div>
+          <div class="layer">read-only <span>role-filtered</span></div>
+          <div class="layer">{ count, items } <span>uniform envelope</span></div>
+        </div>
+      </div>
+      <p>
+        The <b>internal API</b> is the full read/write management surface used by 4Wheels tooling. The <b>partner API</b> is a narrow, read-only projection for external consumers (SCP, Cloud
+        Foundation, SOLAR), each scoped server-side to a curated field set. Both run from the same image, selected by command — not by build (see §09).
+      </p>
 
-<figure>
-<div class="diagram">
-<svg viewBox="0 0 900 360" role="img" aria-label="Coexistence architecture diagram">
-  <defs>
-    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#9198a1"/>
-    </marker>
-  </defs>
-  <!-- consumers -->
-  <rect class="svg-box" x="60" y="18" width="320" height="50" rx="9"/>
-  <text class="svg-t" x="220" y="48">Legacy consumers (v1 / v2)</text>
-  <rect class="svg-box" x="520" y="18" width="320" height="50" rx="9"/>
-  <text class="svg-t" x="680" y="48">New consumers (v3 + SDK)</text>
-  <!-- apps -->
-  <rect class="svg-box legacy" x="60" y="150" width="320" height="66" rx="9"/>
-  <text class="svg-t" x="220" y="180">clusters-4wm</text>
-  <text class="svg-st" x="220" y="201">legacy · frozen after compat patch</text>
-  <rect class="svg-box rewrite" x="520" y="150" width="320" height="66" rx="9"/>
-  <text class="svg-t" x="680" y="180">clusters-metadata-api</text>
-  <text class="svg-st" x="680" y="201">rewrite · owns the schema</text>
-  <!-- arrows consumer->app -->
-  <line class="svg-line" x1="220" y1="68" x2="220" y2="148" marker-end="url(#ah)"/>
-  <line class="svg-line" x1="680" y1="68" x2="680" y2="148" marker-end="url(#ah)"/>
-  <!-- DB cylinder -->
-  <g>
-    <ellipse cx="450" cy="330" rx="150" ry="20" fill="#1c2128" stroke="#30363d" stroke-width="1.5"/>
-    <rect x="300" y="288" width="300" height="42" fill="#1c2128" stroke="none"/>
-    <line x1="300" y1="288" x2="300" y2="330" stroke="#30363d" stroke-width="1.5"/>
-    <line x1="600" y1="288" x2="600" y2="330" stroke="#30363d" stroke-width="1.5"/>
-    <ellipse cx="450" cy="288" rx="150" ry="20" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
-    <text class="svg-t" x="450" y="293">Shared PostgreSQL</text>
-    <text class="svg-mono" x="450" y="322">clusters4wm</text>
-  </g>
-  <!-- arrows app->DB -->
-  <line class="svg-line" x1="250" y1="216" x2="360" y2="280" marker-end="url(#ah)"/>
-  <line class="svg-line" x1="650" y1="216" x2="540" y2="280" marker-end="url(#ah)"/>
-</svg>
-</div>
-<figcaption>Both services read and write the same schema. Schema evolution has exactly one owner at a time (see §11).</figcaption>
-</figure>
+      <h3>Authentication</h3>
+      <p>
+        The scheme is <b>unchanged from legacy</b> — HTTP Basic over TLS. The internal API checks a <b>single credential pair</b>; the partner API accepts <b>one credential pair per partner</b> and
+        adds <b>role-based authorization</b> (<code>require_roles</code>): each partner sees only its own resources, with the <code>M4W</code> role implicitly allowed everywhere. The four partner
+        accounts and the role model are identical, so existing credentials keep working — the rewrite only refactors the implementation (credentials come from typed settings; roles are a
+        <code>StrEnum</code>).
+      </p>
+      <div class="callout warn">
+        <div class="ttl">⚠ One auth surface did shrink</div>
+        <p>
+          Legacy had a <b>second</b> internal credential pair for a dedicated <code>backfill</code> endpoint. That route and its credential are gone in the rewrite (see §12), so the internal API is
+          down to a single credential pair.
+        </p>
+      </div>
 
-<!-- ============================================================= -->
-<h2 id="structure"><span class="num">04</span>Code structure: before &amp; after</h2>
-<p class="sub">The rewrite is organized into explicit layers with clear boundaries between transport, logic, and persistence.</p>
-<div class="grid2">
-  <div class="col legacy card">
-    <h4>Legacy — src/api</h4>
-    <div class="layer">api/m4w <span>v1 + v2 routers</span></div>
-    <div class="layer">api/partner <span>scp / solar</span></div>
-    <div class="layer">api/shared <span>models · repos · enums</span></div>
-    <div class="layer">SQLModel <span>mixed model/schema</span></div>
-  </div>
-  <div class="col new card">
-    <h4>Rewrite — src/app</h4>
-    <div class="layer">api <span>m4w · partner · /v3</span></div>
-    <div class="layer">schemas <span>Pydantic v2 I/O</span></div>
-    <div class="layer">services <span>business logic + UoW</span></div>
-    <div class="layer">repositories <span>SQLAlchemy 2 data access</span></div>
-    <div class="layer">models <span>typed ORM (Mapped)</span></div>
-    <div class="layer">core <span>config · db · security · logging · metrics</span></div>
-  </div>
-</div>
-<p><b>Why this shape.</b> Each layer has one job and dependencies point in a single direction —
-<code>api → services → repositories → models</code> — so HTTP concerns never reach the business logic and SQL
-never leaks into the routers. Request and response shapes live in <code>schemas</code> (Pydantic v2), kept
-deliberately separate from the <code>models</code> (the DB tables): the wire contract and the storage layout can
-evolve independently, and the API can't accidentally expose a column. <code>services</code> own the
-unit-of-work transaction boundary, and <code>core</code> holds the cross-cutting setup (config, DB engine, security,
-logging, metrics). The legacy app mixed these — SQLModel classes were both the table and the API schema, and
-data access sat alongside routing — which is what made it costly to change.</p>
-<p>Two entrypoints share this codebase: <code>app.main:app</code> (the internal M4W API) and <code>app.partner:app</code>
-(the external, read-only partner API). They ship as the same image — the running app is chosen by command, not by
-build (see §10).</p>
+      <!-- ============================================================= -->
+      <h2 id="coexistence"><span class="num">04</span>Coexistence architecture</h2>
+      <p class="sub">Two services, one database. Legacy (compat) keeps serving existing consumers; the rewrite serves migrated ones.</p>
 
-<!-- ============================================================= -->
-<h2 id="db"><span class="num">05</span>Database &amp; migration strategy</h2>
-<p class="sub">The heart of the design: deploy the rewrite without touching the already-migrated production schema.</p>
+      <figure>
+        <div class="diagram">
+          <svg viewBox="0 0 900 360" role="img" aria-label="Coexistence architecture diagram">
+            <defs>
+              <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L7,3 L0,6 Z" fill="#9198a1" />
+              </marker>
+            </defs>
+            <!-- consumers -->
+            <rect class="svg-box" x="60" y="18" width="320" height="50" rx="9" />
+            <text class="svg-t" x="220" y="48">Legacy consumers (v1 / v2)</text>
+            <rect class="svg-box" x="520" y="18" width="320" height="50" rx="9" />
+            <text class="svg-t" x="680" y="48">New consumers (v3 + SDK)</text>
+            <!-- apps -->
+            <rect class="svg-box legacy" x="60" y="150" width="320" height="66" rx="9" />
+            <text class="svg-t" x="220" y="180">clusters-4wm</text>
+            <text class="svg-st" x="220" y="201">legacy + compat patch · then frozen</text>
+            <rect class="svg-box rewrite" x="520" y="150" width="320" height="66" rx="9" />
+            <text class="svg-t" x="680" y="180">clusters-metadata-api</text>
+            <text class="svg-st" x="680" y="201">rewrite · owns the schema</text>
+            <!-- arrows consumer->app -->
+            <line class="svg-line" x1="220" y1="68" x2="220" y2="148" marker-end="url(#ah)" />
+            <line class="svg-line" x1="680" y1="68" x2="680" y2="148" marker-end="url(#ah)" />
+            <!-- DB cylinder -->
+            <g>
+              <ellipse cx="450" cy="330" rx="150" ry="20" fill="#1c2128" stroke="#30363d" stroke-width="1.5" />
+              <rect x="300" y="288" width="300" height="42" fill="#1c2128" stroke="none" />
+              <line x1="300" y1="288" x2="300" y2="330" stroke="#30363d" stroke-width="1.5" />
+              <line x1="600" y1="288" x2="600" y2="330" stroke="#30363d" stroke-width="1.5" />
+              <ellipse cx="450" cy="288" rx="150" ry="20" fill="#161b22" stroke="#58a6ff" stroke-width="1.5" />
+              <text class="svg-t" x="450" y="293">Shared PostgreSQL</text>
+              <text class="svg-mono" x="450" y="322">clusters4wm · existing RDS</text>
+            </g>
+            <!-- arrows app->DB -->
+            <line class="svg-line" x1="250" y1="216" x2="360" y2="280" marker-end="url(#ah)" />
+            <line class="svg-line" x1="650" y1="216" x2="540" y2="280" marker-end="url(#ah)" />
+          </svg>
+        </div>
+        <figcaption>Both services read and write the same schema, on the same physical RDS instance. Schema evolution has exactly one owner at a time (see §10).</figcaption>
+      </figure>
 
-<p>Production databases are already stamped at the legacy Alembic head <code>73aee50345b2</code>. The rewrite collapses
-the entire legacy chain into a <b>single squashed baseline migration that reuses that exact id</b>. So when the rewrite
-runs <code>alembic upgrade head</code>, Alembic sees the DB is already at head and does nothing.</p>
+      <!-- ============================================================= -->
+      <div class="part">
+        <div class="part-k">Part II</div>
+        <div class="part-t">Compatibility changes</div>
+        <div class="part-d">The bridge: one schema migration, a surgical legacy code patch, and a zero-downtime rollout (deploy order + Helm).</div>
+      </div>
+      <h2 id="db"><span class="num">05</span>Database &amp; the no-op deploy</h2>
+      <p class="sub">The heart of the design: deploy the rewrite without running a single migration against the live schema.</p>
 
-<figure>
-<div class="diagram">
-<svg viewBox="0 0 900 300" role="img" aria-label="Migration revision alignment diagram">
-  <defs>
-    <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#9198a1"/>
-    </marker>
-  </defs>
-  <text class="svg-st" x="450" y="22" style="font-weight:600">Legacy Alembic chain · 40+ migrations (2022 → 2026)</text>
-  <rect class="svg-dash" x="24" y="36" width="852" height="70" rx="10"/>
-  <!-- pills -->
-  <rect class="svg-pill" x="44"  y="56" width="120" height="34" rx="17"/><text class="svg-mono" x="104" y="78">305ae6…</text>
-  <rect class="svg-pill" x="196" y="56" width="120" height="34" rx="17"/><text class="svg-mono" x="256" y="78">…</text>
-  <rect class="svg-pill" x="348" y="56" width="120" height="34" rx="17"/><text class="svg-mono" x="408" y="78">b06516…</text>
-  <rect class="svg-pill" x="500" y="56" width="120" height="34" rx="17"/><text class="svg-mono" x="560" y="78">5e67ef…</text>
-  <rect class="svg-box head" x="652" y="54" width="200" height="38" rx="19"/><text class="svg-mono" x="752" y="78">73aee50345b2</text>
-  <!-- chain arrows -->
-  <line class="svg-line" x1="164" y1="73" x2="194" y2="73" marker-end="url(#ah2)"/>
-  <line class="svg-line" x1="316" y1="73" x2="346" y2="73" marker-end="url(#ah2)"/>
-  <line class="svg-line" x1="468" y1="73" x2="498" y2="73" marker-end="url(#ah2)"/>
-  <line class="svg-line" x1="620" y1="73" x2="650" y2="73" marker-end="url(#ah2)"/>
-  <text class="svg-st" x="752" y="112" style="fill:#3fb950;font-weight:600">prod stamped here</text>
-  <!-- collapse arrow -->
-  <path class="svg-line" d="M450,116 L450,160" marker-end="url(#ah2)"/>
-  <text class="svg-note" x="540" y="142">squashed into one baseline</text>
-  <!-- baseline box -->
-  <rect class="svg-box rewrite" x="210" y="168" width="480" height="76" rx="12"/>
-  <text class="svg-t" x="450" y="196">Rewrite baseline (frozen explicit DDL)</text>
-  <text class="svg-mono" x="450" y="220" style="fill:#3fb950">revision = "73aee50345b2" · down_revision = None</text>
-  <text class="svg-st" x="450" y="270">Same id as the prod head ⇒ <tspan style="fill:#e6edf3;font-weight:600">alembic upgrade head is a no-op on prod</tspan></text>
-</svg>
-</div>
-<figcaption>Fresh databases (CI, local, new regions) build the full schema from the baseline; production runs nothing.</figcaption>
-</figure>
+      <p>
+        Alembic only ever compares a revision <b>id string</b>. We exploit that. Production sits at the real legacy head <code>5e67ef3550c0</code>. We author <b>one</b> new legacy migration —
+        <code>73aee50345b2</code>, the v3 compatibility migration — and apply it; production is now stamped <code>73aee50345b2</code>. The rewrite collapses its <b>entire</b> schema into a
+        <b>single squashed baseline migration that reuses that exact id</b>. So when the rewrite runs <code>alembic upgrade head</code>, Alembic sees the DB is already at head and does <b>nothing</b>.
+      </p>
 
-<h3>The baseline migration</h3>
-<p>The baseline is a single migration holding the full schema as explicit, frozen DDL
-(<code>op.create_table(...)</code>), plus the <code>updated_at</code> trigger the schema depends on (triggers aren't part
-of the ORM models, so they're created explicitly). On production it never executes; on a fresh database — CI, local, or
-a new region — it builds the complete schema in one step.</p>
+      <figure>
+        <div class="diagram">
+          <svg viewBox="0 0 900 330" role="img" aria-label="Migration revision alignment diagram">
+            <defs>
+              <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L7,3 L0,6 Z" fill="#9198a1" />
+              </marker>
+            </defs>
+            <text class="svg-st" x="450" y="22" style="font-weight: 600">Legacy Alembic chain · 44 migrations (2022 → 2026)</text>
+            <rect class="svg-dash" x="24" y="36" width="620" height="70" rx="10" />
+            <!-- existing prod pills -->
+            <rect class="svg-pill" x="44" y="56" width="120" height="34" rx="17" fill="#1c2128" stroke="#30363d" stroke-width="1.5" />
+            <text class="svg-mono" x="104" y="78">305ae6…</text>
+            <rect class="svg-pill" x="196" y="56" width="120" height="34" rx="17" fill="#1c2128" stroke="#30363d" stroke-width="1.5" />
+            <text class="svg-mono" x="256" y="78">…</text>
+            <rect class="svg-pill" x="348" y="56" width="120" height="34" rx="17" fill="#1c2128" stroke="#30363d" stroke-width="1.5" />
+            <text class="svg-mono" x="408" y="78">b06516…</text>
+            <rect class="svg-box head" x="500" y="54" width="124" height="38" rx="19" />
+            <text class="svg-mono" x="562" y="78">5e67ef…</text>
+            <text class="svg-st" x="562" y="118" style="fill: #3fb950; font-weight: 600">prod head today</text>
+            <!-- compat migration, added -->
+            <rect class="svg-box compat" x="690" y="54" width="184" height="38" rx="19" />
+            <text class="svg-mono" x="782" y="78">73aee50345b2</text>
+            <text class="svg-st" x="782" y="118" style="fill: #58a6ff; font-weight: 600">compat migration (we add)</text>
+            <!-- chain arrows -->
+            <line class="svg-line" x1="164" y1="73" x2="194" y2="73" marker-end="url(#ah2)" />
+            <line class="svg-line" x1="316" y1="73" x2="346" y2="73" marker-end="url(#ah2)" />
+            <line class="svg-line" x1="468" y1="73" x2="498" y2="73" marker-end="url(#ah2)" />
+            <line class="svg-line" x1="624" y1="73" x2="688" y2="73" marker-end="url(#ah2)" />
+            <!-- collapse arrow -->
+            <path class="svg-line" d="M450,150 L450,186" marker-end="url(#ah2)" />
+            <text class="svg-note" x="560" y="174">entire chain squashed into one baseline</text>
+            <!-- baseline box -->
+            <rect class="svg-box rewrite" x="210" y="194" width="480" height="76" rx="12" />
+            <text class="svg-t" x="450" y="222">Rewrite baseline (frozen explicit DDL)</text>
+            <text class="svg-mono" x="450" y="246" style="fill: #3fb950">revision = "73aee50345b2" · down_revision = None</text>
+            <text class="svg-st" x="450" y="296">
+              Same id as the prod head ⇒
+              <tspan style="fill: #e6edf3; font-weight: 600">alembic upgrade head is a no-op on prod</tspan>
+            </text>
+          </svg>
+        </div>
+        <figcaption>
+          The compat migration (id <code>73aee50345b2</code>, <code>down_revision = 5e67ef3550c0</code>) and the rewrite baseline (same id, <code>down_revision = None</code>) deliberately share one
+          id. Fresh databases build the full schema from the baseline; production runs nothing.
+        </figcaption>
+      </figure>
 
-<!-- ============================================================= -->
-<h2 id="deploy"><span class="num">06</span>Deploy sequencing</h2>
-<p class="sub">Order matters. The no-op deploy is only safe if the shared DB is already at <code>73aee50345b2</code>.</p>
-<ol class="stepper">
-  <li><div class="st">Ship the patched legacy code to all replicas</div>
-      <div class="sd">clusterlock keyed by <code>cluster_id</code>, kubedownscaler fields dropped, <code>feature.type</code>/<code>namespaced</code> null-coercion.</div></li>
-  <li><div class="st">Apply the legacy <code>73aee50345b2</code> migration to the shared DB</div>
-      <div class="sd">Only after the patch rollout completes. First verify there are no orphan <code>clusterlock</code> rows (rows whose <code>cluster_name</code> has no matching cluster) — the migration deletes them.</div></li>
-  <li><div class="st">Deploy the rewrite</div>
-      <div class="sd">Baseline id = prod head ⇒ <code>alembic upgrade head</code> is a no-op. The image carries <code>alembic</code> + <code>migrations/</code> only so fresh environments can still bootstrap.</div></li>
-  <li><div class="st">Rewrite owns the schema; legacy is frozen</div>
-      <div class="sd">New migrations live in the rewrite, chained from <code>73aee50345b2</code>, kept backward-compatible while legacy still runs.</div></li>
-  <li><div class="st">Consumers migrate in waves → retire legacy</div>
-      <div class="sd">When usage drops to zero, the legacy service and SDK are removed.</div></li>
-</ol>
+      <h3>The rewrite's baseline migration</h3>
+      <p>
+        The baseline is a single migration holding the full schema as explicit, frozen DDL (<code>op.create_table(...)</code>, autogenerated then frozen — not <code>create_all</code>, so later
+        migrations apply cleanly), plus the <code>updated_at</code> trigger and its function (triggers aren't part of the ORM models, so they're recreated explicitly). On production it never executes;
+        on a fresh database — local, a new region, a throwaway test DB — it builds the complete schema in one step.
+      </p>
 
-<!-- ============================================================= -->
-<h2 id="schema"><span class="num">07</span>Schema changes (the shared DB)</h2>
-<p class="sub">All applied to production in one place — the legacy <code>73aee50345b2</code> migration — so the live schema matches what the new app expects.</p>
-<p>They fall into three groups: <b>identity &amp; referential integrity</b> — <code>clusterlock</code> is re-keyed
-from the cluster <em>name</em> to the integer <code>cluster_id</code>, and children now cascade-delete with their
-parent cluster; <b>invariants the app relies on</b> — columns that were always populated in practice become
-<code>NOT NULL</code>, and a feature's <code>name</code> becomes unique; and <b>cleanup</b> — the superseded
-<code>kubedownscaler_*</code> columns are dropped and ad-hoc unique constraints renamed to a consistent
-<code>…_uc</code> form. The table below is the complete list.</p>
-<table class="bordered">
-  <tr><th>Area</th><th>Before</th><th>After</th><th>Why</th></tr>
-  <tr><td><code>clusterlock</code></td><td>PK on <code>cluster_name</code></td><td>PK on <code>cluster_id</code>, <code>cluster_name</code> dropped, FK <code>ON DELETE CASCADE</code></td><td>Integer FK identity; locks die with their cluster</td></tr>
-  <tr><td><code>cluster</code></td><td><code>kubedownscaler_downscale_period</code>, <code>kubedownscaler_upscale_period</code></td><td>dropped</td><td>Superseded by <code>uptime_period</code></td></tr>
-  <tr><td><code>feature.type</code></td><td>nullable</td><td><code>NOT NULL</code></td><td>Every feature has a type (<code>namespaced</code> was already NOT NULL)</td></tr>
-  <tr><td><code>feature</code> uniqueness</td><td>none</td><td>unique <code>(name)</code> → <code>feature_name_uc</code></td><td>Feature name is the identity</td></tr>
-  <tr><td><code>cluster.account_name</code></td><td><code>NOT NULL</code></td><td>nullable</td><td>Not always known</td></tr>
-  <tr><td>NOT NULL added</td><td colspan="2"><code>cluster.status</code>, <code>clusterfeature.enabled</code>, <code>release.reserved_namespaces</code>, <code>*_cluster_id</code></td><td>Invariants the app relies on</td></tr>
-  <tr><td>unique constraints</td><td><code>cluster_repository_key</code>, <code>teamswebhook_webhook_id_key</code></td><td>renamed to <code>…_uc</code></td><td>Consistent naming</td></tr>
-  <tr><td>child FKs</td><td>plain</td><td><code>ON DELETE CASCADE</code></td><td>Deleting a cluster removes its children</td></tr>
-</table>
+      <!-- ============================================================= -->
+      <h2 id="schema"><span class="num">06</span>Schema changes (the shared DB)</h2>
+      <p class="sub">
+        The <b>schema half</b> of the compat commit — every change lives in the one <code>73aee50345b2</code> migration, so the live schema matches what the rewrite expects. This is the complete list.
+      </p>
+      <p>
+        They fall into three groups: <b>identity &amp; referential integrity</b> — <code>clusterlock</code> is re-keyed from the cluster <em>name</em> to the integer <code>cluster_id</code>, and child
+        rows cascade-delete with their parent cluster; <b>invariants the apps rely on</b> — columns that were always populated in practice become <code>NOT NULL</code>, and a feature's
+        <code>name</code> becomes unique; and <b>cleanup</b> — the superseded <code>kubedownscaler_*</code> columns are dropped and ad-hoc unique constraints are renamed to a consistent
+        <code>…_uc</code> form.
+      </p>
+      <table class="bordered">
+        <tr>
+          <th>Area</th>
+          <th>Before</th>
+          <th>After</th>
+          <th>Why</th>
+        </tr>
+        <tr>
+          <td><code>clusterlock</code></td>
+          <td>PK on <code>cluster_name</code></td>
+          <td>PK on <code>cluster_id</code>, <code>cluster_name</code> dropped, FK <code>ON DELETE CASCADE</code></td>
+          <td>Integer FK identity; locks die with their cluster (orphans deleted first)</td>
+        </tr>
+        <tr>
+          <td><code>cluster</code></td>
+          <td><code>kubedownscaler_downscale_period</code>, <code>kubedownscaler_upscale_period</code></td>
+          <td>dropped</td>
+          <td>Superseded by <code>uptime_period</code></td>
+        </tr>
+        <tr>
+          <td><code>feature.type</code></td>
+          <td>nullable</td>
+          <td><code>NOT NULL</code> (backfilled <code>'optional'</code>)</td>
+          <td>Every feature has a type (<code>namespaced</code> was already NOT NULL)</td>
+        </tr>
+        <tr>
+          <td><code>feature</code> uniqueness</td>
+          <td>none</td>
+          <td>unique <code>(name)</code> → <code>feature_name_uc</code></td>
+          <td>Feature name is the identity</td>
+        </tr>
+        <tr>
+          <td><code>cluster.account_name</code></td>
+          <td><code>NOT NULL</code></td>
+          <td>nullable</td>
+          <td>Not always known</td>
+        </tr>
+        <tr>
+          <td>NOT NULL added</td>
+          <td colspan="2">
+            <code>cluster.status</code>, <code>clusterfeature.enabled</code>, <code>release.reserved_namespaces</code>, and <code>cluster_id</code> on <code>additionalnodepool</code> /
+            <code>clientnamespace</code> / <code>clientotlpendpoint</code>
+          </td>
+          <td>Invariants the apps rely on (each backfilled first)</td>
+        </tr>
+        <tr>
+          <td>unique constraints</td>
+          <td><code>cluster_repository_key</code>, <code>teamswebhook_webhook_id_key</code></td>
+          <td>renamed to <code>…_uc</code></td>
+          <td>Consistent naming</td>
+        </tr>
+        <tr>
+          <td>child FKs</td>
+          <td>plain</td>
+          <td><code>ON DELETE CASCADE</code></td>
+          <td>node pools, namespaces, OTLP endpoints, cluster/release features all delete with their parent</td>
+        </tr>
+      </table>
+      <div class="callout info">
+        <div class="ttl">▶ Note · safe ordering &amp; the operations exception</div>
+        <p>
+          Every backfill runs <em>before</em> its <code>NOT NULL</code>, and the orphan-lock cleanup runs <em>before</em> the re-key, so the migration is safe on live data. One deliberate exception to
+          the cascade rule: on a fresh DB the rewrite keeps <code>operation.cluster_id</code> as <code>ON DELETE SET NULL</code> — operations survive as an audit trail when a cluster is deleted,
+          rather than vanishing with it.
+        </p>
+      </div>
 
-<!-- ============================================================= -->
-<h2 id="legacy"><span class="num">08</span>What we adapted in the legacy app</h2>
-<p class="sub">The legacy service has to keep working against the post-<code>73aee50345b2</code> schema. The patch is deliberately small and surgical — its behavior is unchanged; the code only adapts to the new column shapes. When you read the legacy diff, this is what each change is and why.</p>
-<table class="bordered">
-  <tr><th>Change</th><th>What &amp; why</th></tr>
-  <tr><td>The <code>73aee50345b2</code> migration</td><td>The schema half: every change in §7, carried as one compatibility migration. Everything below is the code half — legacy catching up to that schema.</td></tr>
-  <tr><td>clusterlock by <code>cluster_id</code></td><td>Legacy model, repository, and lock queries now key on <code>cluster_id</code>; the lock read model derives <code>cluster_name</code> via a join.</td></tr>
-  <tr><td>Drop kubedownscaler on write</td><td>The legacy cluster repository strips the removed <code>kubedownscaler_*</code> fields before persisting.</td></tr>
-  <tr><td><code>feature.type</code> / <code>namespaced</code> null-coercion</td><td>After <code>feature.type</code> became <code>NOT NULL</code>, an explicit <code>type: null</code> (or omitted <code>namespaced</code>) would insert SQL <code>NULL</code> and fail. <code>before</code>-validators coerce <code>null</code>→default and default <code>namespaced</code> to <code>False</code>.</td></tr>
-</table>
+      <!-- ============================================================= -->
+      <h2 id="patch"><span class="num">07</span>The legacy compatibility patch</h2>
+      <p class="sub">
+        The <b>code half</b> of the same commit. Legacy (artifact ②) must keep working against the reshaped schema. The patch is small and surgical — behavior is preserved; the code only adapts to the
+        new column shapes and contract. When you read the legacy diff, this is every change and why.
+      </p>
+      <table class="bordered">
+        <tr>
+          <th>Theme</th>
+          <th>What changed in legacy</th>
+          <th>Why</th>
+        </tr>
+        <tr>
+          <td class="theme-c">clusterlock re-key</td>
+          <td>
+            Model, repository, and lock queries key on <code>cluster_id</code>; <code>lock_cluster</code>/<code>unlock_cluster</code> take a <code>Cluster</code> object; reads expose
+            <code>cluster_name</code> via a new <code>ClusterLockRead</code> model that joins back to <code>cluster</code>.
+          </td>
+          <td>The PK changed from name to id, but the API still returns the human-readable name.</td>
+        </tr>
+        <tr>
+          <td class="theme-c">kubedownscaler drop</td>
+          <td>The cluster repository strips the two removed <code>kubedownscaler_*</code> fields before persisting.</td>
+          <td>Columns no longer exist; old clients may still send them.</td>
+        </tr>
+        <tr>
+          <td class="theme-c">nullable normalization</td>
+          <td><code>account_name</code> and the AWS/Azure string fields default to <code>None</code> in the models; the repository coerces empty strings to <code>NULL</code> on write.</td>
+          <td>Those columns are now nullable — both apps must agree that "unset" means <code>NULL</code>, not <code>""</code>.</td>
+        </tr>
+        <tr>
+          <td class="theme-c">feature null-coercion</td>
+          <td><code>before</code>-validators on <code>FeatureBase</code> coerce <code>type: null</code> → <code>optional</code> and <code>namespaced: null</code> → <code>false</code>.</td>
+          <td>Those columns are now <code>NOT NULL</code>; an explicit JSON <code>null</code> would otherwise insert SQL <code>NULL</code> and raise <code>IntegrityError</code>.</td>
+        </tr>
+        <tr>
+          <td class="theme-c">feature dedup → constraint</td>
+          <td>The feature repository drops its app-level "find existing by name" check (and lists features ascending by id).</td>
+          <td>The new <code>feature_name_uc</code> unique constraint enforces uniqueness at the DB level.</td>
+        </tr>
+        <tr>
+          <td class="theme-c">partner projections</td>
+          <td>SCP/SOLAR response models make <code>azure_vnet_name</code>, <code>azure_vnet_resource_group</code> and <code>account_name</code> optional.</td>
+          <td>Those underlying columns can now be <code>NULL</code>; required fields would fail serialization.</td>
+        </tr>
+        <tr>
+          <td class="theme-c">OTLP auth alignment</td>
+          <td>The OTLP auth model drops the <code>header_key</code> field and its "required when type=header" validator.</td>
+          <td>The rewrite's OTLP auth shape doesn't carry it; both apps must serialize the <code>auth</code> JSON identically.</td>
+        </tr>
+        <tr>
+          <td class="theme-c">release lifecycle</td>
+          <td>The <code>PATCH /v1/releases/{id}</code> endpoint, its <code>ReleaseUpdateRequest</code>, and the repo's <code>update_release</code> are removed.</td>
+          <td>The rewrite has no release-update endpoint — releases are create / read / delete only; legacy is aligned so both present the same release lifecycle.</td>
+        </tr>
+      </table>
+      <div class="callout ok">
+        <div class="ttl">✓ The point of the patch</div>
+        <p>
+          It is a thin compatibility shim, not a refactor: legacy accepts the same requests, normalizes deprecated/null fields, and writes only what the shared schema allows. The rewrite owns all new
+          behavior; legacy just keeps the lights on for un-migrated consumers.
+        </p>
+      </div>
 
-<!-- ============================================================= -->
-<h2 id="contract"><span class="num">09</span>API contract &amp; behavior changes</h2>
-<p class="sub">v3 keeps v2's resource shapes — a cluster or feature looks the same on the wire — with a handful of deliberate departures. These are the ones that change observable behavior.</p>
-<table class="bordered">
-  <tr><th>Aspect</th><th>Legacy</th><th>New</th></tr>
-  <tr><td>Surface</td><td class="legacy-c"><code>/v1</code>, <code>/v2</code></td><td class="new-c"><code>/v3</code> only</td></tr>
-  <tr><td>Errors</td><td class="legacy-c"><code>{"detail": "&lt;string&gt;"}</code></td><td class="new-c">RFC 7807 <code>application/problem+json</code></td></tr>
-  <tr><td>Partner empty result</td><td class="legacy-c"><code>404 {"message": "No clusters found"}</code></td><td class="new-c"><code>200</code> + empty list <span class="badge b-med">intentional change</span></td></tr>
-  <tr><td>OpenAPI / SDK</td><td class="legacy-c">spec produced on demand; SDK generated ad-hoc</td><td class="new-c"><code>openapi.json</code> committed to the repo; CI fails if it drifts from the code</td></tr>
-</table>
+      <!-- ============================================================= -->
+      <h2 id="deploy"><span class="num">08</span>Deploy sequencing</h2>
+      <p class="sub">Order matters. The no-op deploy is only safe once the shared DB is already at <code>73aee50345b2</code>.</p>
+      <ol class="stepper">
+        <li>
+          <div class="st">Ship the compat-patched legacy code (artifact ②) to all replicas</div>
+          <div class="sd">
+            clusterlock keyed by <code>cluster_id</code>; kubedownscaler fields stripped on write; <code>feature.type</code>/<code>namespaced</code> null-coercion; nullable-field normalization. The
+            <em>code</em> must tolerate the new schema before the schema changes.
+          </div>
+        </li>
+        <li>
+          <div class="st">Apply the <code>73aee50345b2</code> migration to the shared DB</div>
+          <div class="sd">
+            Only after the patch rollout completes, and after confirming no pre-patch legacy instance is still live. First verify there are no orphan <code>clusterlock</code> rows (locks whose
+            <code>cluster_name</code> has no matching cluster) — the migration deletes them.
+          </div>
+        </li>
+        <li>
+          <div class="st">Deploy the rewrite (artifact ③)</div>
+          <div class="sd">
+            Its Helm pre-sync job runs <code>alembic upgrade head</code> — a no-op, because the baseline id already equals the prod head. The image carries <code>alembic</code> +
+            <code>migrations/</code> (the <code>migrations</code> dependency group) only so fresh environments can bootstrap; the API itself never imports them.
+          </div>
+        </li>
+        <li>
+          <div class="st">Rewrite owns the schema; legacy is frozen</div>
+          <div class="sd">New migrations live in the rewrite, chained from <code>73aee50345b2</code>, kept backward-compatible while legacy still runs.</div>
+        </li>
+        <li>
+          <div class="st">Consumers migrate in waves → retire legacy</div>
+          <div class="sd">When usage drops to zero, the legacy service and SDK are removed.</div>
+        </li>
+      </ol>
 
-<h3>Behavior a consumer will notice</h3>
-<ul class="tight">
-  <li><b>Addressed by name, not id.</b> Single-cluster routes are <code>/v3/clusters/{cluster_name}</code> (legacy used the numeric id); the name is already unique.</li>
-  <li><b>Uniform list envelope.</b> Every list endpoint returns <code>{ "count": N, "items": [...] }</code>. Legacy v2 mixed bare arrays (e.g. <code>GET /v2/features</code>) with wrapped ones.</li>
-  <li><b>Aggregation &amp; backfill endpoints dropped.</b> The legacy <code>/clusters/releases</code>, <code>/clusters/infra-revisions</code> and <code>backfill</code> routes are gone — the same data is read off the cluster resource itself.</li>
-  <li><b>Empty <code>features</code> is a no-op on write.</b> Sending <code>features: []</code> on create/patch does <em>not</em> wipe a cluster's features — they are only rebuilt from a non-empty list. This deliberately preserves legacy semantics and protects the shared DB the legacy app still reads.</li>
-  <li><b>Partner empty result is <code>200</code>, not <code>404</code>.</b> An empty match returns <code>{ "count": 0, "items": [] }</code> instead of a 404 error body.</li>
-</ul>
+      <!-- ============================================================= -->
+      <h2 id="helm"><span class="num">09</span>Deployment &amp; Helm</h2>
+      <p class="sub">One chart, one image, three runtime roles — pointed at the database that already exists.</p>
+      <p>
+        The chart was renamed <code>clusters-4wm</code> → <code>clusters-metadata-api</code> (and bumped <code>1.5.0</code> → <code>3.0.0</code>), but the template set is unchanged —
+        <code>deployment</code>, <code>job</code>, <code>service</code>, <code>ingress</code>, <code>hpa</code>, <code>servicemonitor</code>, certificates and external-secrets. So the deploy topology
+        is familiar; what changed is how one chart now produces three things.
+      </p>
 
-<h3>Error format</h3>
-<p>Domain errors and transport errors (including auth 401/403) are now RFC 7807 <code>application/problem+json</code>:</p>
-<pre><span class="c"># legacy</span>
+      <h3>Three roles from the same image, chosen by command</h3>
+      <p>
+        The deployment template applies <code>.Values.api.command</code> verbatim to the container, and the init-db Job applies <code>.Values.initDb.command</code> — so the role is pure configuration,
+        no rebuild:
+      </p>
+      <table class="bordered">
+        <tr>
+          <th>Role</th>
+          <th>Command (values)</th>
+          <th>Selected by</th>
+        </tr>
+        <tr>
+          <td>Internal API</td>
+          <td class="new-c"><code>python -m uvicorn app.main:app</code></td>
+          <td>base <code>values.yaml</code></td>
+        </tr>
+        <tr>
+          <td>Partner API</td>
+          <td class="new-c"><code>python -m uvicorn app.partner:app</code></td>
+          <td><code>values-partner*.yaml</code> overlay (own name, <code>initDb</code> + ServiceMonitor off)</td>
+        </tr>
+        <tr>
+          <td>Migration job</td>
+          <td class="new-c"><code>python -m alembic upgrade head</code></td>
+          <td><code>initDb.enabled</code> — an ArgoCD <code>PreSync</code> hook</td>
+        </tr>
+      </table>
+      <p>
+        The migration job is an ArgoCD <b>PreSync hook</b>: it runs <code>alembic upgrade head</code> before the app syncs. On production that's the no-op from §05; on a fresh database it builds the
+        schema first. The partner overlay disables it (<code>initDb.enabled: false</code>) and turns off the ServiceMonitor (the read-only partner app exposes no <code>/metrics</code>). Legacy did the
+        same thing, just through Poetry (<code>poetry run uvicorn api.m4w.main:app</code>).
+      </p>
+
+      <div class="callout crit">
+        <div class="ttl">✗ Point at the existing RDS, not a new one</div>
+        <p>
+          This is the single most important values change. During coexistence the rewrite must talk to the <b>same physical database the legacy app uses</b>. The <code>values-int/prod</code> files set
+          <code>database.external: true</code>, <code>database.name: clusters4wm</code>, and <code>database.host</code> to the
+          <b>legacy RDS</b> (<code>clusters-4wm-{int,prod}-master…rds.amazonaws.com</code>) — <em>not</em> a new <code>clusters-metadata-api-*</code> instance. New service, old database.
+        </p>
+      </div>
+      <p>
+        Credentials and DB secrets resolve through External Secrets from a <b>per-service</b> Vault path (<code>applications/clusters-metadata-api-{env}/…</code>), so the two services manage their own
+        credentials while sharing one RDS. Everything else the app needs is injected as environment by the chart — <code>DB_HOST</code>, <code>DB_NAME</code>, <code>DB_USERNAME/PASSWORD</code>,
+        <code>APP_ENVIRONMENT</code>, <code>APP_VERSION</code>, <code>ADGR_GROUP_REGEX</code>, and the basic-auth pairs — and read on the app side through a typed <code>Settings</code> object (no
+        config files baked into the image).
+      </p>
+      <p>
+        Two smaller niceties: probes moved to the Kubernetes-standard <code>/healthz</code> (liveness + startup) and <code>/readyz</code> (readiness), where legacy used a single <code>/health</code>;
+        and the backfill credential secret is gone along with its route.
+      </p>
+
+      <!-- ============================================================= -->
+      <h2 id="rules"><span class="num">10</span>Operating rules during coexistence</h2>
+      <div class="callout crit">
+        <div class="ttl">✗ Do not ship a legacy schema migration after cutover</div>
+        <p>
+          Legacy is <b>frozen</b> once the rewrite owns the schema. A new legacy migration would advance the shared <code>alembic_version</code> to a revision the rewrite's squashed history doesn't
+          contain, and the rewrite's <code>alembic upgrade head</code> would fail with <code>Can't locate revision …</code>, blocking its deploys.
+        </p>
+      </div>
+      <div class="callout warn">
+        <div class="ttl">⚠ Keep coexistence migrations backward-compatible</div>
+        <p>
+          While both services run, the rewrite's new migrations must be additive (new nullable columns, new tables) so the frozen legacy app keeps working. Breaking changes wait until legacy is
+          retired.
+        </p>
+      </div>
+      <div class="callout warn">
+        <div class="ttl">⚠ Helm values must point at the legacy RDS</div>
+        <p>
+          During coexistence, <code>database.host</code> in <code>values-int/prod</code> must stay on the <code>clusters-4wm-*-master</code> RDS with DB name <code>clusters4wm</code>. Pointing the
+          rewrite at a fresh <code>clusters-metadata-api-*</code> instance would split the data across two databases and silently break legacy consumers.
+        </p>
+      </div>
+      <div class="callout warn">
+        <div class="ttl">⚠ Check for orphan locks before applying <code>73aee50345b2</code></div>
+        <p>The clusterlock re-key deletes rows whose <code>cluster_name</code> has no matching cluster. Verify there are none (or none actively locked) before applying the migration to live prod.</p>
+      </div>
+      <div class="callout info">
+        <div class="ttl">▶ Authoring future migrations</div>
+        <p>
+          Run <code>uv run alembic upgrade head</code> on a dev DB first, change the models, then <code>alembic revision --autogenerate</code> — it emits only the delta against the at-head schema.
+          Always review the result: autogenerate does not detect renames, triggers/functions, or (by default) server-default changes.
+        </p>
+      </div>
+
+      <!-- ============================================================= -->
+      <div class="part">
+        <div class="part-k">Part III</div>
+        <div class="part-t">The rewrite</div>
+        <div class="part-d">The new service in detail — layout, the v3 contract, the full endpoint map, and the toolchain.</div>
+      </div>
+      <h2 id="structure"><span class="num">11</span>Code structure: before &amp; after</h2>
+      <p class="sub">The rewrite is organized into explicit layers with clear boundaries between transport, logic, and persistence.</p>
+      <div class="grid2">
+        <div class="col legacy card">
+          <h4>Legacy — src/api</h4>
+          <div class="layer">api/m4w <span>v1 + v2 routers</span></div>
+          <div class="layer">api/partner <span>scp / solar</span></div>
+          <div class="layer">api/shared <span>models · repos · enums</span></div>
+          <div class="layer">SQLModel <span>table = schema = validator</span></div>
+        </div>
+        <div class="col new card">
+          <h4>Rewrite — src/app</h4>
+          <div class="layer">api <span>m4w · partner · /v3</span></div>
+          <div class="layer">schemas <span>Pydantic v2 I/O</span></div>
+          <div class="layer">services <span>business logic + txn boundary</span></div>
+          <div class="layer">repositories <span>SQLAlchemy 2 data access</span></div>
+          <div class="layer">models <span>typed ORM (Mapped)</span></div>
+          <div class="layer">core <span>config · db · security · logging · metrics</span></div>
+        </div>
+      </div>
+      <p>
+        <b>Why this shape.</b> Each layer has one job and dependencies point in a single direction — <code>api → services → repositories → models</code> — so HTTP concerns never reach the business
+        logic and SQL never leaks into the routers. Request/response shapes live in <code>schemas</code> (Pydantic v2), deliberately separate from the <code>models</code> (the DB tables): the wire
+        contract and the storage layout evolve independently, and the API can't accidentally expose a column. <code>services</code> own the transaction boundary (<code>commit</code>/<code
+          >rollback</code
+        >
+        happen there, not in routers or repos), and <code>core</code> holds the cross-cutting setup. The cluster aggregate — the only complex one — is itself split into a <code>service</code> /
+        <code>translator</code> / <code>mapper</code> trio so its nested-field syncing stays readable.
+      </p>
+      <p>
+        Two entrypoints share this codebase: <code>app.main:app</code> (internal) and <code>app.partner:app</code> (partner). They ship as the <b>same image</b>; the running app — or the migration job
+        — is chosen by overriding the container command (Helm <code>api.command</code>, compose <code>command</code>), not by a separate build (see §09).
+      </p>
+
+      <!-- ============================================================= -->
+      <h2 id="contract"><span class="num">12</span>API contract &amp; behavior changes</h2>
+      <p class="sub">
+        v3 keeps v2's resource <em>shapes</em> — a cluster or feature looks the same on the wire — with a handful of deliberate departures. These are the ones that change observable behavior.
+      </p>
+      <table class="bordered">
+        <tr>
+          <th>Aspect</th>
+          <th>Legacy</th>
+          <th>New</th>
+        </tr>
+        <tr>
+          <td>Surface</td>
+          <td class="legacy-c"><code>/v1</code>, <code>/v2</code></td>
+          <td class="new-c"><code>/v3</code> only</td>
+        </tr>
+        <tr>
+          <td>Single-cluster routes</td>
+          <td class="legacy-c">by numeric id — <code>/clusters/{id}</code></td>
+          <td class="new-c">by name — <code>/v3/clusters/{cluster_name}</code></td>
+        </tr>
+        <tr>
+          <td>List responses</td>
+          <td class="legacy-c">mixed: bare arrays + a <code>{count, clusters}</code> wrapper</td>
+          <td class="new-c">uniform <code>{ "count": N, "items": [...] }</code> everywhere</td>
+        </tr>
+        <tr>
+          <td>Errors</td>
+          <td class="legacy-c"><code>{"detail": "…"}</code> (and <code>{"message": …}</code> on partner)</td>
+          <td class="new-c">RFC 7807 <code>application/problem+json</code></td>
+        </tr>
+        <tr>
+          <td>Partner empty result</td>
+          <td class="legacy-c"><code>404 {"message": "No clusters found"}</code></td>
+          <td class="new-c"><code>200</code> + empty list <span class="badge b-med">intentional</span></td>
+        </tr>
+        <tr>
+          <td>Partner routes</td>
+          <td class="legacy-c"><code>/v1/clusters</code>, <code>/v1/solar/clusters</code></td>
+          <td class="new-c"><code>/v3/partners/scp/clusters</code>, <code>/v3/partners/solar/clusters</code></td>
+        </tr>
+        <tr>
+          <td>OpenAPI / SDK</td>
+          <td class="legacy-c">spec produced on demand; SDK generated ad-hoc</td>
+          <td class="new-c"><code>openapi.json</code> committed; deterministic regeneration (sorted keys); SDK generated from it</td>
+        </tr>
+      </table>
+
+      <h3>Behavior a consumer will notice</h3>
+      <ul class="tight">
+        <li><b>Addressed by name, not id.</b> Single-cluster routes use <code>/v3/clusters/{cluster_name}</code> (and locks/operations hang off the same path); the name is already unique.</li>
+        <li>
+          <b>Uniform list envelope.</b> Every list endpoint returns <code>{ "count": N, "items": [...] }</code> — note the key is <code>items</code>, not legacy v2's <code>clusters</code>. Legacy's
+          bare-array endpoints are gone.
+        </li>
+        <li>
+          <b>Aggregation, sub-resource &amp; backfill reads dropped.</b> Gone: <code>/clusters/releases</code> and <code>/clusters/infra-revisions</code> (aggregations),
+          <code>/clusters/{id}/client-otlp-endpoints</code> and <code>/client-namespaces</code> (now part of the cluster representation), <code>/clusters/adgr</code>, the single-cluster
+          <code>/clusters/{id}/status</code> read, and <code>/clusters/{id}/backfill</code>. The status <em>list</em> and <em>bulk update</em> are kept
+          (<code>GET</code>/<code>PATCH /v3/clusters/status</code>) — see the full map in §13.
+        </li>
+        <li><b>Releases are create / read / delete only.</b> There is no release-update endpoint — a release is replaced, not patched.</li>
+        <li>
+          <b>Empty <code>features</code> is a no-op on write.</b> Sending <code>features: []</code> on create/patch does <em>not</em> wipe a cluster's features — they are only rebuilt from a non-empty
+          list. This deliberately preserves legacy semantics and protects the shared DB the legacy app still reads.
+        </li>
+        <li>
+          <b>Partner empty result is <code>200</code>, not <code>404</code>.</b> An empty match returns <code>{ "count": 0, "items": [] }</code> instead of a 404 error body.
+        </li>
+      </ul>
+
+      <h3>Partner API — a real contract change</h3>
+      <p>
+        Internal resource <em>shapes</em> carry over from v2, but the partner projection genuinely changed on the wire.
+        Partner consumers (SCP, CF, SOLAR) must <b>adapt</b>, not just re-point. The selected <em>fields</em> are
+        otherwise unchanged.
+      </p>
+      <table class="bordered">
+        <tr><th>Aspect</th><th>Legacy</th><th>New</th></tr>
+        <tr>
+          <td>Path</td>
+          <td class="legacy-c"><code>/v1/clusters</code>, <code>/v1/solar/clusters</code></td>
+          <td class="new-c"><code>/v3/partners/scp/clusters</code>, <code>/v3/partners/solar/clusters</code></td>
+        </tr>
+        <tr>
+          <td>Envelope</td>
+          <td class="legacy-c"><code>{ count, clusters }</code> (clusters nullable)</td>
+          <td class="new-c"><code>{ count, items }</code> (items always a list)</td>
+        </tr>
+        <tr>
+          <td>Item identity</td>
+          <td class="legacy-c">no id</td>
+          <td class="new-c">new <code>id</code> field on every item</td>
+        </tr>
+        <tr>
+          <td>Nullable fields</td>
+          <td class="legacy-c">required strings</td>
+          <td class="new-c">SCP <code>azure_vnet_name</code> / <code>azure_vnet_resource_group</code>, SOLAR <code>account_name</code> may be <code>null</code></td>
+        </tr>
+        <tr>
+          <td>Empty result</td>
+          <td class="legacy-c"><code>404 {"message": …}</code></td>
+          <td class="new-c"><code>200 { "count": 0, "items": [] }</code></td>
+        </tr>
+        <tr>
+          <td>Query filters</td>
+          <td class="legacy-c">bespoke per-partner filter set</td>
+          <td class="new-c">shared <code>ClusterListQuery</code> (<code>extra=forbid</code>): SOLAR keeps its filters; SCP loses <code>azure_vnet_name</code> / <code>azure_vnet_resource_group</code> as filters</td>
+        </tr>
+      </table>
+
+      <h3>Error format</h3>
+      <p>Domain errors and transport errors (including auth 401/403) are now RFC 7807 <code>application/problem+json</code>:</p>
+      <pre><span class="c"># legacy</span>
 { "detail": "Cluster not found" }
 
 <span class="c"># rewrite — Content-Type: application/problem+json</span>
 { "type": "about:blank", "title": "Not Found", "status": 404, "detail": "Cluster not found" }</pre>
-<p>Request-validation errors (422) are intentionally left in FastAPI's default shape so they keep matching the
-generated OpenAPI/SDK.</p>
+      <p>Request-validation errors (422) are intentionally left in FastAPI's default shape so they keep matching the generated OpenAPI/SDK 422 schema.</p>
 
-<p><b>Why OpenAPI is checked in.</b> The API contract lives in version control as <code>openapi.json</code>,
-regenerated with sorted keys (<code>scripts/generate_openapi_spec.py</code>) so it only changes when the contract
-really does. CI regenerates it and fails the build if it differs from the committed copy — so no change can alter
-the public API, and the SDK generated from it, without that showing up as a reviewable diff in the same PR. In
-legacy the spec existed only at runtime, so contract drift stayed invisible until a consumer hit it.</p>
+      <p>
+        <b>Why OpenAPI is checked in.</b> The API contract lives in version control as <code>openapi.json</code>, regenerated deterministically with sorted keys
+        (<code>scripts/generate_openapi_spec.py</code>) so it only changes when the contract really does. Regenerating is a single command, so any change to the public API — and the SDK generated from
+        it (<code>scripts/generate_sdk.sh</code>, <code>sdk-config.yml</code>) — shows up as a reviewable diff in the same PR. In legacy the spec existed only at runtime, so contract drift stayed
+        invisible until a consumer hit it.
+      </p>
 
-<!-- ============================================================= -->
-<h2 id="tooling"><span class="num">10</span>Tooling &amp; stack changes</h2>
-<table class="bordered">
-  <tr><th>Area</th><th>Legacy</th><th>New</th></tr>
-  <tr><td>Dependency / build</td><td class="legacy-c">Poetry + <code>poetry-core</code></td><td class="new-c">uv + <code>hatchling</code> (PEP 735 groups)</td></tr>
-  <tr><td>ORM modeling</td><td class="legacy-c">SQLModel (model/schema mixed)</td><td class="new-c">SQLAlchemy 2 typed models (<code>Mapped</code>) + separate Pydantic v2 schemas</td></tr>
-  <tr><td>Versions</td><td class="legacy-c">capped ranges</td><td class="new-c">lower-bound only; <code>uv.lock</code> pins; Dependabot drives bumps</td></tr>
-  <tr><td>Container</td><td class="legacy-c">multi-target</td><td class="new-c">single 3-stage image; venv built at <code>/app</code>; non-root; command selects app/migrations</td></tr>
-  <tr><td>Local dev</td><td class="legacy-c"><code>docker-compose.yaml</code> + init_db</td><td class="new-c"><code>compose.yaml</code>: db + one-shot <code>migrate</code> + api + partner</td></tr>
-  <tr><td>Quality gates</td><td class="legacy-c">partial</td><td class="new-c">ruff (lint+format), <code>mypy --strict</code>, pytest + testcontainers, CI</td></tr>
-</table>
+      <!-- ============================================================= -->
+      <h2 id="endpoints"><span class="num">13</span>Endpoint map (legacy → v3)</h2>
+      <p class="sub">
+        The exhaustive list — every legacy route (v1 <em>and</em> v2) and its fate in v3, so nothing is missed in
+        review. Legend: <span class="badge b-ok">kept</span> same behavior · <span class="badge b-med">changed</span>
+        path/method/shape · <span class="badge b-crit">removed</span> no equivalent.
+      </p>
 
-<p><b>ORM modeling, before &amp; after.</b> A legacy SQLModel class was the table, the validator, and the API schema all
-at once. The rewrite splits them: a typed SQLAlchemy model <em>is just the table</em>, and request/response shapes live
-in separate Pydantic v2 schemas (so the wire contract and the storage layout evolve independently).</p>
-<div class="grid2">
-  <div class="snip legacy">
-    <h4>Legacy — SQLModel (table + schema)</h4>
-<pre><span class="k">class</span> FeatureBase(SQLModel):
+      <h3>Clusters</h3>
+      <table class="bordered">
+        <tr><th>Legacy</th><th>v3</th><th></th><th>Note</th></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters</code> · <code>GET /v2/clusters</code></td><td class="new-c"><code>GET /v3/clusters</code></td><td><span class="badge b-med">changed</span></td><td>two versions merged into one; <code>{count, items}</code> envelope</td></tr>
+        <tr><td class="legacy-c"><code>POST /v1/clusters</code></td><td class="new-c"><code>POST /v3/clusters</code></td><td><span class="badge b-ok">kept</span></td><td>—</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/{id}</code></td><td class="new-c"><code>GET /v3/clusters/{name}</code></td><td><span class="badge b-med">changed</span></td><td>addressed by name, not id</td></tr>
+        <tr><td class="legacy-c"><code>PUT /v1/clusters/{id}</code></td><td class="new-c"><code>PATCH /v3/clusters/{name}</code></td><td><span class="badge b-med">changed</span></td><td>by name; <code>PUT</code> → <code>PATCH</code></td></tr>
+        <tr><td class="legacy-c"><code>DELETE /v1/clusters/{id}</code></td><td class="new-c"><code>DELETE /v3/clusters/{name}</code></td><td><span class="badge b-med">changed</span></td><td>by name</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/status</code></td><td class="new-c"><code>GET /v3/clusters/status</code></td><td><span class="badge b-ok">kept</span></td><td>status list</td></tr>
+        <tr><td class="legacy-c"><code>PUT /v1/clusters/status</code></td><td class="new-c"><code>PATCH /v3/clusters/status</code></td><td><span class="badge b-med">changed</span></td><td>bulk status update; <code>PUT</code> → <code>PATCH</code></td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/{id}/status</code></td><td>—</td><td><span class="badge b-crit">removed</span></td><td>status is a field on the cluster read</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/{id}/client-otlp-endpoints</code></td><td>—</td><td><span class="badge b-crit">removed</span></td><td>now part of the cluster representation</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/{id}/client-namespaces</code></td><td>—</td><td><span class="badge b-crit">removed</span></td><td>now part of the cluster representation</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/releases</code> · <code>GET /v2/clusters/releases</code></td><td>—</td><td><span class="badge b-crit">removed</span></td><td>aggregation; read off the cluster resource</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/infra-revisions</code> · <code>GET /v2/…</code></td><td>—</td><td><span class="badge b-crit">removed</span></td><td>aggregation; read off the cluster resource</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/adgr</code></td><td>—</td><td><span class="badge b-crit">removed</span></td><td>ADGR-group lookup dropped</td></tr>
+        <tr><td class="legacy-c"><code>PUT /v1/clusters/{id}/backfill</code></td><td>—</td><td><span class="badge b-crit">removed</span></td><td>route <em>and</em> its dedicated credential gone</td></tr>
+      </table>
+
+      <h3>Features</h3>
+      <table class="bordered">
+        <tr><th>Legacy</th><th>v3</th><th></th><th>Note</th></tr>
+        <tr><td class="legacy-c"><code>GET /v1/features</code> · <code>GET /v2/features</code></td><td class="new-c"><code>GET /v3/features</code></td><td><span class="badge b-med">changed</span></td><td>merged; <code>{count, items}</code> envelope</td></tr>
+        <tr><td class="legacy-c"><code>POST /v1/features</code></td><td class="new-c"><code>POST /v3/features</code></td><td><span class="badge b-ok">kept</span></td><td>—</td></tr>
+        <tr><td class="legacy-c"><code>DELETE /v1/features/{id}</code></td><td class="new-c"><code>DELETE /v3/features/{id}</code></td><td><span class="badge b-ok">kept</span></td><td>—</td></tr>
+      </table>
+
+      <h3>Releases</h3>
+      <table class="bordered">
+        <tr><th>Legacy</th><th>v3</th><th></th><th>Note</th></tr>
+        <tr><td class="legacy-c"><code>GET /v1/releases</code> · <code>GET /v2/releases</code></td><td class="new-c"><code>GET /v3/releases</code></td><td><span class="badge b-med">changed</span></td><td>merged; <code>{count, items}</code> envelope</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/releases/{provider}/{name}</code></td><td class="new-c"><code>GET /v3/releases/{id}</code></td><td><span class="badge b-med">changed</span></td><td>single-release lookup is now by id</td></tr>
+        <tr><td class="legacy-c"><code>POST /v1/releases</code></td><td class="new-c"><code>POST /v3/releases</code></td><td><span class="badge b-ok">kept</span></td><td>—</td></tr>
+        <tr><td class="legacy-c"><code>DELETE /v1/releases/{id}</code></td><td class="new-c"><code>DELETE /v3/releases/{id}</code></td><td><span class="badge b-ok">kept</span></td><td>—</td></tr>
+        <tr><td class="legacy-c"><code>PATCH /v1/releases/{id}</code></td><td>—</td><td><span class="badge b-crit">removed</span></td><td>no release update — replace, don't patch</td></tr>
+      </table>
+
+      <h3>Operations</h3>
+      <table class="bordered">
+        <tr><th>Legacy</th><th>v3</th><th></th><th>Note</th></tr>
+        <tr><td class="legacy-c"><code>GET /v1/operations</code> · <code>GET /v2/operations</code></td><td class="new-c"><code>GET /v3/operations</code></td><td><span class="badge b-med">changed</span></td><td>merged; <code>{count, items}</code> envelope</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters/{id}/operations</code></td><td class="new-c"><code>GET /v3/clusters/{name}/operations</code></td><td><span class="badge b-med">changed</span></td><td>by name</td></tr>
+        <tr><td class="legacy-c"><code>POST /v1/clusters/{id}/operations</code></td><td class="new-c"><code>POST /v3/clusters/{name}/operations</code></td><td><span class="badge b-med">changed</span></td><td>by name</td></tr>
+      </table>
+
+      <h3>Locks</h3>
+      <table class="bordered">
+        <tr><th>Legacy</th><th>v3</th><th></th><th>Note</th></tr>
+        <tr><td class="legacy-c"><code>GET /v1/locks</code> · <code>GET /v2/locks</code></td><td class="new-c"><code>GET /v3/locks</code></td><td><span class="badge b-med">changed</span></td><td>merged; <code>{count, items}</code> envelope</td></tr>
+        <tr><td class="legacy-c"><code>PUT /v1/clusters/{name}/lock</code></td><td class="new-c"><code>POST /v3/clusters/{name}/lock</code></td><td><span class="badge b-med">changed</span></td><td>acquire; <code>PUT</code> → <code>POST</code></td></tr>
+        <tr><td class="legacy-c"><code>PUT /v1/clusters/{name}/unlock</code></td><td class="new-c"><code>DELETE /v3/clusters/{name}/lock</code></td><td><span class="badge b-med">changed</span></td><td>release; now <code>DELETE</code> on the lock</td></tr>
+      </table>
+
+      <h3>Partner</h3>
+      <table class="bordered">
+        <tr><th>Legacy</th><th>v3</th><th></th><th>Note</th></tr>
+        <tr><td class="legacy-c"><code>GET /v1/clusters</code> (SCP/CF)</td><td class="new-c"><code>GET /v3/partners/scp/clusters</code></td><td><span class="badge b-med">changed</span></td><td>path + contract — see §12</td></tr>
+        <tr><td class="legacy-c"><code>GET /v1/solar/clusters</code> (SOLAR)</td><td class="new-c"><code>GET /v3/partners/solar/clusters</code></td><td><span class="badge b-med">changed</span></td><td>path + contract — see §12</td></tr>
+      </table>
+      <div class="callout info">
+        <div class="ttl">▶ Net for the internal API</div>
+        <p>
+          The two legacy versions (v1 + v2) collapse to a single <code>/v3</code>. Core CRUD on clusters, features,
+          releases, operations and locks is preserved (re-keyed to <code>{cluster_name}</code> and re-verbed where it
+          makes the contract cleaner). What's truly gone: the read-only aggregations, the two cluster sub-resource reads,
+          <code>/adgr</code>, per-cluster single-status, backfill, and release update.
+        </p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="tooling"><span class="num">14</span>Tooling, config &amp; stack</h2>
+      <table class="bordered">
+        <tr>
+          <th>Area</th>
+          <th>Legacy</th>
+          <th>New</th>
+        </tr>
+        <tr>
+          <td>Dependency / build</td>
+          <td class="legacy-c">Poetry + <code>poetry-core</code></td>
+          <td class="new-c">uv + <code>hatchling</code> (PEP 735 dependency groups)</td>
+        </tr>
+        <tr>
+          <td>ORM modeling</td>
+          <td class="legacy-c">SQLModel (table / schema / validator in one class)</td>
+          <td class="new-c">SQLAlchemy 2 typed models (<code>Mapped</code>) + separate Pydantic v2 schemas</td>
+        </tr>
+        <tr>
+          <td>Version pinning</td>
+          <td class="legacy-c">capped ranges (<code>~=</code>, <code>^</code>)</td>
+          <td class="new-c">lower-bound only; exact pins in committed <code>uv.lock</code></td>
+        </tr>
+        <tr>
+          <td>Config</td>
+          <td class="legacy-c">scattered env reads</td>
+          <td class="new-c">typed <code>Settings</code> (pydantic-settings); fully env-driven, nothing baked into the image</td>
+        </tr>
+        <tr>
+          <td>Container</td>
+          <td class="legacy-c">single-stage Poetry image — ships Poetry, <em>all</em> deps &amp; the source tree; no healthcheck</td>
+          <td class="new-c">3-stage uv build — runtime carries only the prod venv (no dev deps / build tools / source) + migrations; non-root; healthcheck</td>
+        </tr>
+        <tr>
+          <td>Local dev</td>
+          <td class="legacy-c"><code>docker-compose.yaml</code>: adminer + db + <code>init_db</code> + app</td>
+          <td class="new-c"><code>compose.yaml</code>: db + one-shot <code>migrate</code> + api + partner (live-reload)</td>
+        </tr>
+        <tr>
+          <td>Quality tooling</td>
+          <td class="legacy-c">lenient ruff; no mypy config</td>
+          <td class="new-c">strict ruff rule-set, <code>mypy --strict</code>, pytest + testcontainers — all configured in <code>pyproject.toml</code></td>
+        </tr>
+      </table>
+
+      <p>
+        <b>Same entrypoint model, better build.</b> Both legacy and the rewrite ship a <b>single image</b> that can run the internal app, the partner app, <em>or</em> the migration job — the role is
+        chosen by overriding the container command (compose / Helm), never by separate images or build targets. <b>That didn't change.</b> Legacy's <code>Dockerfile</code> simply hard-codes the internal
+        app as its default <code>CMD</code> and relied on command overrides for the rest — the rewrite does the same, just documents it. What actually changed is image hygiene: legacy is a single-stage
+        image that <code>pip install</code>s Poetry and copies the source tree in; the rewrite's multi-stage uv build keeps Poetry/build tooling and dev dependencies out of the runtime layer, installs the
+        package into a venv instead of copying source, and adds a healthcheck.
+      </p>
+
+      <p>
+        <b>ORM modeling, before &amp; after.</b> A legacy SQLModel class was the table, the validator, and the API schema all at once. The rewrite splits them: a typed SQLAlchemy model
+        <em>is just the table</em>, and request/response shapes live in separate Pydantic v2 schemas (so the wire contract and the storage layout evolve independently).
+      </p>
+      <div class="grid2">
+        <div class="snip legacy">
+          <h4>Legacy — SQLModel (table + schema)</h4>
+          <pre><span class="k">class</span> FeatureBase(SQLModel):
     name: Annotated[str, AfterValidator(...)]
     type: Optional[str] = FeatureType.OPTIONAL
     dependencies: Optional[List[LowercasedStr]] = Field(
@@ -470,10 +1517,10 @@ in separate Pydantic v2 schemas (so the wire contract and the storage layout evo
 <span class="k">class</span> Feature(FeatureBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     clusters: List["ClusterFeature"] = Relationship(...)</pre>
-  </div>
-  <div class="snip new">
-    <h4>Rewrite — SQLAlchemy 2 (table only)</h4>
-<pre><span class="k">class</span> Feature(Base):
+        </div>
+        <div class="snip new">
+          <h4>Rewrite — SQLAlchemy 2 (table only)</h4>
+          <pre><span class="k">class</span> Feature(Base):
     __tablename__ = <span class="s">"feature"</span>
     __table_args__ = (UniqueConstraint("name", name="feature_name_uc"),)
 
@@ -484,39 +1531,13 @@ in separate Pydantic v2 schemas (so the wire contract and the storage layout evo
     namespaced: Mapped[bool] = mapped_column(default=False, ...)
 
     cluster_features: Mapped[list[ClusterFeature]] = relationship(...)</pre>
-  </div>
-</div>
+        </div>
+      </div>
 
-<!-- ============================================================= -->
-<h2 id="rules"><span class="num">11</span>Operating rules during coexistence</h2>
-<div class="callout crit">
-  <div class="ttl">✗ Do not ship a legacy schema migration after cutover</div>
-  <p>Legacy is <b>frozen</b> once the rewrite owns the schema. A new legacy migration would advance the shared
-  <code>alembic_version</code> to a revision the rewrite's squashed history doesn't contain, and the rewrite's
-  <code>alembic upgrade head</code> would fail with <code>Can't locate revision …</code>, blocking its deploys.</p>
-</div>
-<div class="callout warn">
-  <div class="ttl">⚠ Keep coexistence migrations backward-compatible</div>
-  <p>While both services run, the rewrite's new migrations must be additive (new nullable columns, new tables) so the
-  frozen legacy app keeps working. Breaking changes wait until legacy is retired.</p>
-</div>
-<div class="callout warn">
-  <div class="ttl">⚠ Check for orphan locks before applying <code>73aee50345b2</code></div>
-  <p>The clusterlock re-key deletes rows whose <code>cluster_name</code> has no matching cluster. Verify there are none
-  (or none that are actively locked) before applying it to live prod.</p>
-</div>
-<div class="callout info">
-  <div class="ttl">▶ Future migrations</div>
-  <p>Run <code>uv run alembic upgrade head</code> on a dev DB first, change the models, then
-  <code>alembic revision --autogenerate</code> — it emits only the delta against the at-head schema. Always review the
-  result: autogenerate does not detect renames, triggers/functions, or (by default) server-default changes.</p>
-</div>
-
-<footer>
-  Engineering reference for the <code>clusters-4wm</code> → <code>clusters-metadata-api</code> transition.
-  Self-contained — no external assets.
-</footer>
-
-</div>
-</body>
+      <footer>
+        Engineering reference for the <code>clusters-4wm</code> → <code>clusters-metadata-api</code> transition. Branches: <code>main</code> (legacy) · <code>legacy-v3-compat</code> (compat patch) ·
+        <code>clean-rewrite</code> (rewrite). Self-contained — no external assets.
+      </footer>
+    </div>
+  </body>
 </html>

@@ -1367,7 +1367,8 @@
         <b>Why OpenAPI is checked in.</b> The API contract lives in version control as <code>openapi.json</code>, regenerated deterministically with sorted keys
         (<code>scripts/generate_openapi_spec.py</code>) so it only changes when the contract really does. Regenerating is a single command, so any change to the public API — and the SDK generated from
         it (<code>scripts/generate_sdk.sh</code>, <code>sdk-config.yml</code>) — shows up as a reviewable diff in the same PR. In legacy the spec existed only at runtime, so contract drift stayed
-        invisible until a consumer hit it.
+        invisible until a consumer hit it. CI runs <code>oasdiff</code> on every PR to flag breaking contract changes, and on release the client is built from that spec and published as a versioned
+        package to internal Artifactory (<code>uv publish</code>) — replacing legacy's model of force-pushing generated source into a separate <code>clusters-4wm-client</code> repo.
       </p>
 
       <!-- ============================================================= -->
@@ -1489,6 +1490,11 @@
           <td>Quality tooling</td>
           <td class="legacy-c">lenient ruff; no mypy config</td>
           <td class="new-c">strict ruff rule-set, <code>mypy --strict</code>, pytest + testcontainers — all configured in <code>pyproject.toml</code></td>
+        </tr>
+        <tr>
+          <td>SDK delivery</td>
+          <td class="legacy-c">Java OpenAPI Generator; generated client force-pushed as source to a separate <code>clusters-4wm-client</code> repo</td>
+          <td class="new-c"><code>openapi-python-client</code> from the committed spec; built &amp; published as a versioned package to internal Artifactory (<code>uv publish</code>)</td>
         </tr>
       </table>
 
